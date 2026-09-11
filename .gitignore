@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Datos pesados: mantener fuera de GitHub, pero dejar carpetas creadas.
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Artefactos generados.
+models/*
+!models/.gitkeep
+images/*
+!images/.gitkeep
+reports/*
+!reports/.gitkeep
+
+*.keras
+*.h5
+*.pkl
+*.joblib
