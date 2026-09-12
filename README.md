@@ -37,6 +37,29 @@ Una aplicacion educativa o de accesibilidad necesita reconocer senas de letras d
 - Modelo entrenado guardado en `models/` si corresponde.
 - Presentacion y defensa tecnica de 10 minutos.
 
+## Avance actual: Gonzalo Castillo
+
+La primera parte implementada corresponde a la carga y preparacion de datos:
+
+- Lectura de los CSV originales del dataset Sign Language MNIST.
+- Separacion de variables de entrada (`pixel1` a `pixel784`) y etiqueta (`label`).
+- Normalizacion de pixeles desde 0-255 hacia 0-1.
+- Transformacion de cada imagen de 28x28 pixeles a un vector de 784 valores para el MLP.
+- Creacion de una particion de validacion estratificada desde el set de entrenamiento.
+- Mantencion del set de test oficial para la evaluacion final.
+
+Para regenerar la evidencia:
+
+```powershell
+python scripts\gonzalo_preprocessing_report.py
+```
+
+Archivos generados por esta parte:
+
+- `reports/gonzalo_preprocessing_summary.md`
+- `images/gonzalo_class_distribution.png`
+- `images/gonzalo_sample_grid.png`
+
 ## Division de trabajo
 
 ### Gonzalo

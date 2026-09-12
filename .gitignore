@@ -14,8 +14,11 @@ models/*
 !models/.gitkeep
 images/*
 !images/.gitkeep
+!images/gonzalo_class_distribution.png
+!images/gonzalo_sample_grid.png
 reports/*
 !reports/.gitkeep
+!reports/gonzalo_preprocessing_summary.md
 
 *.keras
 *.h5
