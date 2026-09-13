@@ -4,8 +4,18 @@ def build_mlp(
     hidden_layers=(256, 128),
     dropout=0.25,
     learning_rate=0.001,
+    loss="sparse_categorical_crossentropy",
 ):
-    """Build a Keras MLP for image classification."""
+    """Construye un MLP con capas Dense, ReLU y salida softmax.
+
+    Cada neurona calcula una suma ponderada más un sesgo y aplica ReLU.
+    La salida tiene una neurona por clase. Adam actualiza los pesos para
+    reducir la crossentropy.
+
+    Con etiquetas enteras usar sparse_categorical_crossentropy (valor
+    original del proyecto). Con one-hot, como en la actividad 1.4.4,
+    usar categorical_crossentropy. Dropout=0 deja solo capas densas.
+    """
     try:
         from tensorflow import keras
         from tensorflow.keras import layers
@@ -27,7 +37,7 @@ def build_mlp(
     optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
     model.compile(
         optimizer=optimizer,
-        loss="sparse_categorical_crossentropy",
+        loss=loss,
         metrics=["accuracy"],
     )
     return model

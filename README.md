@@ -60,6 +60,94 @@ Archivos generados por esta parte:
 - `images/gonzalo_class_distribution.png`
 - `images/gonzalo_sample_grid.png`
 
+## Aporte de Jenaro: modelo y entrenamiento
+
+El propósito académico es comprender el caso y fundamentar las decisiones.
+Las métricas sirven para discutir qué aprendió el modelo, dónde falla y
+para qué podría resultar útil. Se conserva el experimento realizado y sus
+resultados, aunque muestren limitaciones. El trabajo se realiza directamente
+en `main`, según la indicación de Jenaro, sin crear ramas adicionales.
+
+El dataset fue confirmado por Jenaro como aprobado por el profesor. La
+versión con su aporte es
+[`notebooks/02_sign_language_mnist_mlp_jenaro.ipynb`](notebooks/02_sign_language_mnist_mlp_jenaro.ipynb).
+El notebook 01 se conserva como versión inicial del equipo.
+
+La versión 02 mantiene la preparación de Gonzalo y desarrolla las secciones
+5 y 6 con los contenidos de las actividades 1.4.3 y 1.4.4:
+
+- Tres arquitecturas: `(32,)`, `(128, 64)` y `(512, 256, 128)`.
+- Capas Dense con ReLU y 24 salidas softmax.
+- One-hot encoding y `categorical_crossentropy`, como en el ejemplo MNIST.
+- Adam, learning rate 0,001, batch 128, 20 épocas y semilla 42.
+- Comparación de capacidad sin Dropout, con la misma partición de datos.
+- Selección por F1 macro de validación; en empate exacto, menor pérdida de
+  validación y menor número de parámetros. Se comparan los pesos de la última época.
+
+El test oficial se evalúa después de la selección, utilizando el código de
+evaluación que ya tenía el proyecto. Las métricas y figuras automáticas
+sirven como insumo para Jason; su interpretación de errores y las conclusiones
+globales siguen siendo su aporte. La variante propia del equipo debe
+documentarse entre los integrantes; se conserva el split existente de Gonzalo.
+
+Evidencia y explicación:
+
+- [Informe del modelo y entrenamiento](reports/jenaro_modelo_entrenamiento.md).
+- [Comparación de validación en CSV](reports/jenaro_comparacion_validacion.csv).
+- [Curvas de los tres modelos](images/jenaro_curvas_comparacion.png).
+- [Configuración, mapeo, versiones y huellas](reports/jenaro_entrenamiento.json).
+- [Apoyo para la defensa de Jenaro](presentation/jenaro_defensa.md).
+
+Resultados de la ejecución local de referencia (20 épocas por modelo):
+
+| Capas ocultas | Parámetros | Accuracy de validación | F1 macro de validación |
+| --- | ---: | ---: | ---: |
+| 32 | 25.912 | 65,60% | 0,6556 |
+| 128, 64 | 110.296 | 97,80% | 0,9790 |
+| 512, 256, 128 | 569.240 | 100,00% | 1,0000 |
+
+Se seleccionó el modelo de 512, 256 y 128 neuronas. Su evaluación posterior
+en el test oficial obtuvo **79,17% de accuracy y 0,7703 de F1 macro**.
+La caída de 20,83 puntos respecto de validación muestra que el 100% interno
+no se mantiene en test. El informe explica este límite sin atribuir causas
+no comprobadas ni volver a seleccionar el modelo usando test.
+
+El modelo seleccionado se guarda localmente en `models/jenaro_mlp.keras`.
+Los CSV y el modelo binario siguen excluidos de Git; al compartir solamente
+el repositorio deben proporcionarse los datos y volver a ejecutar el notebook.
+El modelo espera 784 píxeles divididos por 255. Su pérdida requiere etiquetas
+one-hot al llamar a `evaluate`. `predict` devuelve probabilidades y no recibe etiquetas.
+
+### Ejecutar el aporte desde cero
+
+Desde la raíz del proyecto, con Python y el ZIP disponible:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements-jenaro.txt
+python -m ipykernel install --sys-prefix --name python3 --display-name "Python (Sign MLP)"
+python scripts/prepare_data.py --zip "RUTA/Sign Language MNIST.zip"
+jupyter notebook notebooks/02_sign_language_mnist_mlp_jenaro.ipynb
+```
+
+En Jupyter: reiniciar el kernel y ejecutar todas las celdas en orden. Para
+ejecutar y guardar las salidas desde terminal con el entorno activado:
+
+```powershell
+jupyter nbconvert --to notebook --execute --inplace notebooks/02_sign_language_mnist_mlp_jenaro.ipynb --ExecutePreprocessor.timeout=1800
+```
+
+Se necesita el repositorio completo porque el notebook importa módulos de
+`src/sign_mlp/`. En Colab, colocar también `src/` y los CSV en sus carpetas,
+trabajar desde la raíz y usar el notebook 02. Las versiones de Colab pueden
+diferir de las registradas para la ejecución local.
+
+Los originales de clases se conservan fuera del repositorio. La metodología
+proviene de esos materiales; no se agregan CNN, data augmentation ni búsquedas
+automáticas. Las métricas se obtienen mediante ejecución real. La defensa
+debe fundamentar las decisiones a partir de esos resultados.
+
 ## Division de trabajo
 
 ### Gonzalo
@@ -157,8 +245,8 @@ jupyter notebook notebooks\01_sign_language_mnist_mlp.ipynb
 - [ ] Problema definido y dataset justificado.
 - [ ] Variante propia del trabajo documentada.
 - [ ] Carga y preprocesamiento explicado.
-- [ ] MLP implementado y justificado.
-- [ ] Entrenamiento y validacion registrados.
+- [x] MLP implementado y justificado (aporte de Jenaro, notebook 02).
+- [x] Entrenamiento y validacion registrados (aporte de Jenaro, notebook 02).
 - [ ] Accuracy, precision, recall, F1-score y matriz de confusion calculados.
 - [ ] Ejemplos correctos e incorrectos analizados.
 - [ ] Limitaciones del MLP explicadas.

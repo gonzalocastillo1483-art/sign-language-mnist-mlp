@@ -24,3 +24,17 @@ reports/*
 *.h5
 *.pkl
 *.joblib
+
+# Evidencia del aporte de Jenaro (el modelo binario sigue siendo local).
+!reports/jenaro_modelo_entrenamiento.md
+!reports/jenaro_comparacion_validacion.csv
+!reports/jenaro_entrenamiento.json
+!reports/jenaro_historial_A_pequena.csv
+!reports/jenaro_historial_B_mediana.csv
+!reports/jenaro_historial_C_grande.csv
+!reports/jenaro_integracion_classification_report.txt
+!reports/jenaro_integracion_test.json
+!images/jenaro_curvas_comparacion.png
+!images/jenaro_integracion_confusion_matrix.png
+!images/jenaro_integracion_correct_examples.png
+!images/jenaro_integracion_incorrect_examples.png

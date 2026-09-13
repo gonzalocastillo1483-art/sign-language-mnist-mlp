@@ -1,0 +1,165 @@
+{
+  "responsable": "Jenaro",
+  "seleccionado": "C_grande",
+  "criterio": "F1 macro validación descendente; val_loss ascendente; parámetros ascendentes",
+  "pesos_evaluados": "última época de cada arquitectura",
+  "test_usado_para_seleccion": false,
+  "semilla_particion": 42,
+  "semilla_entrenamiento": 42,
+  "epochs": 20,
+  "batch_size": 128,
+  "learning_rate": 0.001,
+  "activation": "relu",
+  "output_activation": "softmax",
+  "dropout": 0,
+  "loss": "categorical_crossentropy",
+  "optimizer": "Adam",
+  "arquitecturas": {
+    "A_pequena": [
+      32
+    ],
+    "B_mediana": [
+      128,
+      64
+    ],
+    "C_grande": [
+      512,
+      256,
+      128
+    ]
+  },
+  "datos": {
+    "image_size": 28,
+    "input_dim": 784,
+    "num_classes": 24,
+    "class_labels": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24
+    ],
+    "class_names": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "K",
+      "L",
+      "M",
+      "N",
+      "O",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "T",
+      "U",
+      "V",
+      "W",
+      "X",
+      "Y"
+    ],
+    "validation_size": 0.2,
+    "random_state": 42
+  },
+  "particiones": {
+    "train": 21964,
+    "validation": 5491,
+    "test": 7172
+  },
+  "resultados_validacion": [
+    {
+      "modelo": "C_grande",
+      "capas": "(512, 256, 128)",
+      "parametros": 569240,
+      "epocas": 20,
+      "segundos_fit": 18.31783430001815,
+      "train_loss": 0.0020558538381010294,
+      "val_loss": 0.00259774224832654,
+      "train_accuracy": 1.0,
+      "val_accuracy": 1.0,
+      "val_precision_macro": 1.0,
+      "val_recall_macro": 1.0,
+      "val_f1_macro": 1.0,
+      "gap_accuracy": 0.0
+    },
+    {
+      "modelo": "B_mediana",
+      "capas": "(128, 64)",
+      "parametros": 110296,
+      "epocas": 20,
+      "segundos_fit": 8.533481499995105,
+      "train_loss": 0.10399902611970901,
+      "val_loss": 0.1178104430437088,
+      "train_accuracy": 0.9833819270133972,
+      "val_accuracy": 0.977963924407959,
+      "val_precision_macro": 0.9815450196280331,
+      "val_recall_macro": 0.9781928150360195,
+      "val_f1_macro": 0.979032384834999,
+      "gap_accuracy": 0.005418002605438232
+    },
+    {
+      "modelo": "A_pequena",
+      "capas": "(32,)",
+      "parametros": 25912,
+      "epocas": 20,
+      "segundos_fit": 6.078353599994443,
+      "train_loss": 1.055652141571045,
+      "val_loss": 1.074777603149414,
+      "train_accuracy": 0.6735112071037292,
+      "val_accuracy": 0.655982494354248,
+      "val_precision_macro": 0.6625404677171508,
+      "val_recall_macro": 0.6583771032822939,
+      "val_f1_macro": 0.6555549897452478,
+      "gap_accuracy": 0.0175287127494812
+    }
+  ],
+  "modelo": "models/jenaro_mlp.keras",
+  "modelo_sha256": "114fab79284610550bacc195cc8b8fdf0504cbdd8e2b47e2dc72ce35a4ce8ff1",
+  "dataset_sha256": {
+    "sign_mnist_train.csv": "4c2897f19fab2b0ae2a7e4fa82e969043315d9f3a1a9cc0948b576bf1189a7e5",
+    "sign_mnist_test.csv": "0e9d67bae23e67f40728e0b63bf15ad4bd5175947b8a9fac5dd9f17ce133c47b"
+  },
+  "python": "3.13.6",
+  "plataforma": "Windows",
+  "recursos_ejecucion": {
+    "TF_NUM_INTRAOP_THREADS": "4",
+    "TF_NUM_INTEROP_THREADS": "2",
+    "OMP_NUM_THREADS": "4"
+  },
+  "versiones": {
+    "tensorflow": "2.20.0",
+    "keras": "3.15.1",
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "matplotlib": "3.11.2",
+    "seaborn": "0.13.2",
+    "scikit-learn": "1.9.1"
+  },
+  "recarga_verificada": true
+}
