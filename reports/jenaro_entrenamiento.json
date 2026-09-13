@@ -98,9 +98,9 @@
       "capas": "(512, 256, 128)",
       "parametros": 569240,
       "epocas": 20,
-      "segundos_fit": 18.31783430001815,
-      "train_loss": 0.0020558538381010294,
-      "val_loss": 0.00259774224832654,
+      "segundos_fit": 31.45021900000029,
+      "train_loss": 0.002017752965912223,
+      "val_loss": 0.002443262841552496,
       "train_accuracy": 1.0,
       "val_accuracy": 1.0,
       "val_precision_macro": 1.0,
@@ -113,7 +113,7 @@
       "capas": "(128, 64)",
       "parametros": 110296,
       "epocas": 20,
-      "segundos_fit": 8.533481499995105,
+      "segundos_fit": 10.389403700000003,
       "train_loss": 0.10399902611970901,
       "val_loss": 0.1178104430437088,
       "train_accuracy": 0.9833819270133972,
@@ -128,7 +128,7 @@
       "capas": "(32,)",
       "parametros": 25912,
       "epocas": 20,
-      "segundos_fit": 6.078353599994443,
+      "segundos_fit": 10.808361700000205,
       "train_loss": 1.055652141571045,
       "val_loss": 1.074777603149414,
       "train_accuracy": 0.6735112071037292,
@@ -140,17 +140,17 @@
     }
   ],
   "modelo": "models/jenaro_mlp.keras",
-  "modelo_sha256": "114fab79284610550bacc195cc8b8fdf0504cbdd8e2b47e2dc72ce35a4ce8ff1",
+  "modelo_sha256": "af9ef6678ac04f389a42e73c69dc51a4c29252cf51b7a1820deffb0d990db1f1",
   "dataset_sha256": {
     "sign_mnist_train.csv": "4c2897f19fab2b0ae2a7e4fa82e969043315d9f3a1a9cc0948b576bf1189a7e5",
     "sign_mnist_test.csv": "0e9d67bae23e67f40728e0b63bf15ad4bd5175947b8a9fac5dd9f17ce133c47b"
   },
-  "python": "3.13.6",
+  "python": "3.12.3",
   "plataforma": "Windows",
   "recursos_ejecucion": {
-    "TF_NUM_INTRAOP_THREADS": "4",
-    "TF_NUM_INTEROP_THREADS": "2",
-    "OMP_NUM_THREADS": "4"
+    "TF_NUM_INTRAOP_THREADS": "valor predeterminado",
+    "TF_NUM_INTEROP_THREADS": "valor predeterminado",
+    "OMP_NUM_THREADS": "valor predeterminado"
   },
   "versiones": {
     "tensorflow": "2.20.0",

@@ -10,13 +10,13 @@ Se compara el modelo de la última época. Selección por F1 macro de validació
 
 | Modelo | Capas | Parámetros | Accuracy train | Accuracy val | F1 macro val | Loss val | Segundos fit |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| C_grande | (512, 256, 128) | 569240 | 1.0000 | 1.0000 | 1.0000 | 0.0026 | 18.3 |
-| B_mediana | (128, 64) | 110296 | 0.9834 | 0.9780 | 0.9790 | 0.1178 | 8.5 |
-| A_pequena | (32,) | 25912 | 0.6735 | 0.6560 | 0.6556 | 1.0748 | 6.1 |
+| C_grande | (512, 256, 128) | 569240 | 1.0000 | 1.0000 | 1.0000 | 0.0024 | 31.5 |
+| B_mediana | (128, 64) | 110296 | 0.9834 | 0.9780 | 0.9790 | 0.1178 | 10.4 |
+| A_pequena | (32,) | 25912 | 0.6735 | 0.6560 | 0.6556 | 1.0748 | 10.8 |
 
 ## Lectura de curvas
 
-**C_grande**: la pérdida de entrenamiento pasó de 2.2967 a 0.0022 y la de validación de 1.5473 a 0.0026. El mínimo de validación fue 0.0026 en la época 20. Con los pesos finales, la diferencia train menos validación fue 0.00 puntos porcentuales.
+**C_grande**: la pérdida de entrenamiento pasó de 2.2967 a 0.0019 y la de validación de 1.5473 a 0.0024. El mínimo de validación fue 0.0024 en la época 20. Con los pesos finales, la diferencia train menos validación fue 0.00 puntos porcentuales.
 
 **B_mediana**: la pérdida de entrenamiento pasó de 2.5494 a 0.1193 y la de validación de 1.9428 a 0.1178. El mínimo de validación fue 0.1178 en la época 20. Con los pesos finales, la diferencia train menos validación fue 0.54 puntos porcentuales.
 
@@ -48,4 +48,4 @@ Material docente: `1.4.4_Notebook_Modelo_Keras_Metricas_Estudiante.ipynb` (one-h
 
 ## Comprobación posterior en el test oficial
 
-El modelo seleccionado obtiene **79.17% de accuracy en test** y **0.7703 de F1 macro**, frente a 100.00% de accuracy en validación. La diferencia validación menos test es de **20.83 puntos porcentuales**. Esta comparación permite valorar cuánto se mantiene el desempeño al pasar al test oficial. En la corrida de referencia, la caída muestra que la validación interna ofrece una estimación optimista del desempeño en ese test. No se puede atribuir la causa solo a sobreajuste, personas distintas o fondos distintos sin investigar los datos. Se conserva la selección previa y no se vuelve a ajustar usando este test. El análisis detallado de clases y ejemplos queda para Jason.
+El modelo seleccionado obtiene **79.71% de accuracy en test** y **0.7760 de F1 macro**, frente a 100.00% de accuracy en validación. La diferencia validación menos test es de **20.29 puntos porcentuales**. Esta comparación permite valorar cuánto se mantiene el desempeño al pasar al test oficial. En la corrida de referencia, la caída muestra que la validación interna ofrece una estimación optimista del desempeño en ese test. No se puede atribuir la causa solo a sobreajuste, personas distintas o fondos distintos sin investigar los datos. Se conserva la selección previa y no se vuelve a ajustar usando este test. El análisis detallado de clases y ejemplos queda para Jason.

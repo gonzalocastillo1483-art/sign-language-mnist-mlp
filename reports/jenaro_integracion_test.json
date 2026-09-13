@@ -1,11 +1,11 @@
 {
   "modelo": "C_grande",
   "seleccion_realizada_antes_del_test": true,
-  "test_loss": 1.1015368700027466,
-  "test_accuracy": 0.791689932346344,
-  "test_precision_macro": 0.7741537587631949,
-  "test_recall_macro": 0.7796595195028416,
-  "test_f1_macro": 0.7702911759646526,
-  "gap_validacion_test_pp": 20.8310067653656,
+  "test_loss": 1.0482653379440308,
+  "test_accuracy": 0.7971277236938477,
+  "test_precision_macro": 0.7782772473970603,
+  "test_recall_macro": 0.7858779958165089,
+  "test_f1_macro": 0.7760310431989058,
+  "gap_validacion_test_pp": 20.287227630615234,
   "n_test": 7172
 }
