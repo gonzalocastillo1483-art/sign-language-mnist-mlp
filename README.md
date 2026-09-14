@@ -1,20 +1,30 @@
 # Clasificacion de lenguaje de senas con MLP
 
-Proyecto para la Evaluacion Parcial 1 de TLY1102. El objetivo es construir, entrenar y defender un modelo de red neuronal tipo MLP para clasificar imagenes del dataset Sign Language MNIST.
+Proyecto para la Evaluacion Parcial 1 de TLY1102. El objetivo es construir,
+entrenar y defender un modelo de red neuronal tipo MLP para clasificar imagenes
+del dataset Sign Language MNIST.
 
 ## Decision del equipo
 
 Dataset elegido: `Sign Language MNIST.zip`.
 
-Variante inicial: clasificar las letras disponibles del alfabeto ASL usando imagenes de 28x28 pixeles en escala de grises. Si el tiempo no alcanza, se puede reducir a un subconjunto de clases, por ejemplo A-F o A-L, dejando documentada la decision.
+La variante trabajada corresponde a un problema de clasificacion multiclase:
+clasificar las letras disponibles del alfabeto ASL usando imagenes de 28x28
+pixeles en escala de grises. El dataset contiene 24 clases: A-I y K-Y. No
+incluye J ni Z porque esas senas requieren movimiento y el dataset contiene
+imagenes estaticas.
 
 ## Problema de negocio
 
-Una aplicacion educativa o de accesibilidad necesita reconocer senas de letras del alfabeto a partir de imagenes. El modelo propuesto busca clasificar cada imagen en la letra correspondiente, como primera version de un sistema de apoyo para aprendizaje de lenguaje de senas.
+Una aplicacion educativa o de accesibilidad necesita reconocer senas de letras
+del alfabeto a partir de imagenes. El modelo propuesto busca clasificar cada
+imagen en la letra correspondiente, como primera version de un sistema de apoyo
+para aprendizaje de lenguaje de senas.
 
 ## Objetivos
 
-- Implementar un flujo completo de ciencia de datos para clasificacion de imagenes.
+- Implementar un flujo completo de ciencia de datos para clasificacion de
+  imagenes.
 - Entrenar una red neuronal MLP como modelo base.
 - Evaluar el desempeno con metricas de clasificacion.
 - Analizar errores y limitaciones del modelo.
@@ -22,31 +32,55 @@ Una aplicacion educativa o de accesibilidad necesita reconocer senas de letras d
 
 ## KPIs
 
-- Accuracy de validacion.
+- Accuracy de validacion y test.
 - F1-score macro para medir desempeno balanceado entre clases.
 - Precision y recall por clase.
-- Diferencia entre accuracy de entrenamiento y validacion para observar posible sobreajuste.
-- Cantidad de clases con mayor confusion en la matriz de confusion.
+- Diferencia entre accuracy de validacion y test para observar generalizacion.
+- Letras con mayor confusion en la matriz de confusion.
+
+## Estado actual
+
+| Responsable | Aporte principal | Estado |
+| --- | --- | --- |
+| Gonzalo Castillo | Carga, normalizacion y particion de datos | Completo |
+| Jenaro | Diseno, entrenamiento y comparacion de modelos MLP | Completo |
+| Jason | Evaluacion final, matriz de confusion, ejemplos y conclusiones | Completo |
+
+El flujo completo ya esta implementado en
+[`notebooks/02_sign_language_mnist_mlp_jenaro.ipynb`](notebooks/02_sign_language_mnist_mlp_jenaro.ipynb).
+El notebook 01 se conserva como version inicial del equipo.
 
 ## Entregables
 
-- `README.md` con problema, objetivos, KPIs, metodologia, resultados y conclusiones.
-- Notebook ejecutable en `notebooks/01_sign_language_mnist_mlp.ipynb`.
+- `README.md` con problema, objetivos, KPIs, metodologia, resultados y
+  conclusiones.
+- Notebook ejecutable en `notebooks/02_sign_language_mnist_mlp_jenaro.ipynb`.
 - Carpeta de proyecto ordenada.
-- Graficos y evidencias en `images/` o `reports/`.
-- Modelo entrenado guardado en `models/` si corresponde.
+- Graficos y evidencias en `images/` y `reports/`.
+- Modelo entrenado generado localmente en `models/jenaro_mlp.keras`.
 - Presentacion y defensa tecnica de 10 minutos.
 
-## Avance actual: Gonzalo Castillo
+## Aporte de Gonzalo Castillo: carga y preprocesamiento
 
-La primera parte implementada corresponde a la carga y preparacion de datos:
+La primera parte implementada corresponde a la preparacion de los datos:
 
 - Lectura de los CSV originales del dataset Sign Language MNIST.
-- Separacion de variables de entrada (`pixel1` a `pixel784`) y etiqueta (`label`).
+- Separacion de variables de entrada (`pixel1` a `pixel784`) y etiqueta
+  (`label`).
 - Normalizacion de pixeles desde 0-255 hacia 0-1.
-- Transformacion de cada imagen de 28x28 pixeles a un vector de 784 valores para el MLP.
-- Creacion de una particion de validacion estratificada desde el set de entrenamiento.
+- Transformacion de cada imagen de 28x28 pixeles a un vector de 784 valores
+  para el MLP.
+- Creacion de una particion de validacion estratificada desde el set de
+  entrenamiento.
 - Mantencion del set de test oficial para la evaluacion final.
+
+Particiones usadas:
+
+| Conjunto | Filas |
+| --- | ---: |
+| Entrenamiento | 21.964 |
+| Validacion | 5.491 |
+| Test oficial | 7.172 |
 
 Para regenerar la evidencia:
 
@@ -62,91 +96,86 @@ Archivos generados por esta parte:
 
 ## Aporte de Jenaro: modelo y entrenamiento
 
-El propósito académico es comprender el caso y fundamentar las decisiones.
-Las métricas sirven para discutir qué aprendió el modelo, dónde falla y
-para qué podría resultar útil. Se conserva el experimento realizado y sus
-resultados, aunque muestren limitaciones. El trabajo se realiza directamente
-en `main`, según la indicación de Jenaro, sin crear ramas adicionales.
+La version 02 mantiene la preparacion de Gonzalo y desarrolla el modelo MLP
+con los contenidos de las actividades 1.4.3 y 1.4.4:
 
-El dataset fue confirmado por Jenaro como aprobado por el profesor. La
-versión con su aporte es
-[`notebooks/02_sign_language_mnist_mlp_jenaro.ipynb`](notebooks/02_sign_language_mnist_mlp_jenaro.ipynb).
-El notebook 01 se conserva como versión inicial del equipo.
-
-La versión 02 mantiene la preparación de Gonzalo y desarrolla las secciones
-5 y 6 con los contenidos de las actividades 1.4.3 y 1.4.4:
-
-- Tres arquitecturas: `(32,)`, `(128, 64)` y `(512, 256, 128)`.
+- Tres arquitecturas comparadas: `(32,)`, `(128, 64)` y `(512, 256, 128)`.
 - Capas Dense con ReLU y 24 salidas softmax.
 - One-hot encoding y `categorical_crossentropy`, como en el ejemplo MNIST.
-- Adam, learning rate 0,001, batch 128, 20 épocas y semilla 42.
-- Comparación de capacidad sin Dropout, con la misma partición de datos.
-- Selección por F1 macro de validación; en empate exacto, menor pérdida de
-  validación y menor número de parámetros. Se comparan los pesos de la última época.
+- Optimizador Adam, learning rate 0.001, batch 128, 20 epocas y semilla 42.
+- Comparacion de capacidad sin Dropout, con la misma particion de datos.
+- Seleccion por F1 macro de validacion; en empate exacto, menor perdida de
+  validacion y menor numero de parametros.
 
-El test oficial se evalúa después de la selección, utilizando el código de
-evaluación que ya tenía el proyecto. Las métricas y figuras automáticas
-sirven como insumo para Jason; su interpretación de errores y las conclusiones
-globales siguen siendo su aporte. La variante propia del equipo debe
-documentarse entre los integrantes; se conserva el split existente de Gonzalo.
+Resultados de validacion de la ejecucion local de referencia:
 
-Evidencia y explicación:
+| Modelo | Capas ocultas | Parametros | Accuracy val | F1 macro val |
+| --- | --- | ---: | ---: | ---: |
+| A_pequena | 32 | 25.912 | 65.60% | 0.6556 |
+| B_mediana | 128, 64 | 110.296 | 97.80% | 0.9790 |
+| C_grande | 512, 256, 128 | 569.240 | 100.00% | 1.0000 |
+
+Se selecciono el modelo `C_grande` porque obtuvo el mejor F1 macro de
+validacion. Esta seleccion se hizo antes de mirar el test oficial.
+
+Evidencia y explicacion:
 
 - [Informe del modelo y entrenamiento](reports/jenaro_modelo_entrenamiento.md).
-- [Comparación de validación en CSV](reports/jenaro_comparacion_validacion.csv).
+- [Comparacion de validacion en CSV](reports/jenaro_comparacion_validacion.csv).
 - [Curvas de los tres modelos](images/jenaro_curvas_comparacion.png).
-- [Configuración, mapeo, versiones y huellas](reports/jenaro_entrenamiento.json).
+- [Configuracion, mapeo, versiones y huellas](reports/jenaro_entrenamiento.json).
 - [Apoyo para la defensa de Jenaro](presentation/jenaro_defensa.md).
 
-Resultados de la ejecución local de referencia (20 épocas por modelo):
+## Aporte de Jason: evaluacion y analisis de errores
 
-| Capas ocultas | Parámetros | Accuracy de validación | F1 macro de validación |
-| --- | ---: | ---: | ---: |
-| 32 | 25.912 | 65,60% | 0,6556 |
-| 128, 64 | 110.296 | 97,80% | 0,9790 |
-| 512, 256, 128 | 569.240 | 100,00% | 1,0000 |
+Despues de seleccionar el modelo por validacion, se evaluo el modelo `C_grande`
+en el set de test oficial.
 
-Se seleccionó el modelo de 512, 256 y 128 neuronas. Su evaluación posterior
-en el test oficial obtuvo **79,17% de accuracy y 0,7703 de F1 macro**.
-La caída de 20,83 puntos respecto de validación muestra que el 100% interno
-no se mantiene en test. El informe explica este límite sin atribuir causas
-no comprobadas ni volver a seleccionar el modelo usando test.
+Resultados de test:
 
-El modelo seleccionado se guarda localmente en `models/jenaro_mlp.keras`.
-Los CSV y el modelo binario siguen excluidos de Git; al compartir solamente
-el repositorio deben proporcionarse los datos y volver a ejecutar el notebook.
-El modelo espera 784 píxeles divididos por 255. Su pérdida requiere etiquetas
-one-hot al llamar a `evaluate`. `predict` devuelve probabilidades y no recibe etiquetas.
+| Metrica | Valor |
+| --- | ---: |
+| Accuracy test | 79.71% |
+| Precision macro test | 0.7783 |
+| Recall macro test | 0.7859 |
+| F1 macro test | 0.7760 |
+| Imagenes evaluadas | 7.172 |
 
-### Ejecutar el aporte desde cero
+La diferencia entre el 100.00% de validacion y el 79.71% de test muestra que
+la validacion interna fue optimista. El modelo aprende patrones utiles, pero
+no mantiene el mismo rendimiento sobre el test oficial.
 
-Desde la raíz del proyecto, con Python y el ZIP disponible:
+Letras con mejor desempeno:
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements-jenaro.txt
-python -m ipykernel install --sys-prefix --name python3 --display-name "Python (Sign MLP)"
-python scripts/prepare_data.py --zip "RUTA/Sign Language MNIST.zip"
-jupyter notebook notebooks/02_sign_language_mnist_mlp_jenaro.ipynb
-```
+- B: F1-score 0.97.
+- A y E: F1-score 0.94.
+- P: F1-score 0.91.
+- C: F1-score 0.90.
 
-En Jupyter: reiniciar el kernel y ejecutar todas las celdas en orden. Para
-ejecutar y guardar las salidas desde terminal con el entorno activado:
+Letras con peor desempeno:
 
-```powershell
-jupyter nbconvert --to notebook --execute --inplace notebooks/02_sign_language_mnist_mlp_jenaro.ipynb --ExecutePreprocessor.timeout=1800
-```
+- S: F1-score 0.52.
+- R: F1-score 0.58.
+- T: F1-score 0.59.
+- N: F1-score 0.61.
+- U: F1-score 0.63.
 
-Se necesita el repositorio completo porque el notebook importa módulos de
-`src/sign_mlp/`. En Colab, colocar también `src/` y los CSV en sus carpetas,
-trabajar desde la raíz y usar el notebook 02. Las versiones de Colab pueden
-diferir de las registradas para la ejecución local.
+Los errores se concentran en letras visualmente parecidas. En los ejemplos
+mal clasificados aparecen confusiones como B con U, D con X, N con A, S con I,
+T con X, N con S, U con D, U con Y y F con C.
 
-Los originales de clases se conservan fuera del repositorio. La metodología
-proviene de esos materiales; no se agregan CNN, data augmentation ni búsquedas
-automáticas. Las métricas se obtienen mediante ejecución real. La defensa
-debe fundamentar las decisiones a partir de esos resultados.
+Limitacion principal del MLP: al usar una entrada plana de 784 valores, el
+modelo conserva los pixeles, pero no aprovecha explicitamente la relacion
+espacial entre pixeles vecinos como lo haria una CNN. Por eso puede ser mas
+sensible a cambios de posicion, fondo o pequenas diferencias entre manos.
+
+Evidencia:
+
+- [Metricas de test](reports/jenaro_integracion_test.json).
+- [Reporte de clasificacion por clase](reports/jenaro_integracion_classification_report.txt).
+- [Matriz de confusion](images/jenaro_integracion_confusion_matrix.png).
+- [Ejemplos correctos](images/jenaro_integracion_correct_examples.png).
+- [Ejemplos incorrectos](images/jenaro_integracion_incorrect_examples.png).
 
 ## Division de trabajo
 
@@ -156,21 +185,22 @@ debe fundamentar las decisiones a partir de esos resultados.
 - Separar datos de entrenamiento, validacion y prueba.
 - Normalizar pixeles.
 - Convertir las imagenes al formato que necesita el MLP.
-- Documentar en README la descripcion del dataset, objetivos, KPIs, CRISP-DM y preprocesamiento.
+- Documentar la descripcion del dataset, objetivos, KPIs, CRISP-DM y
+  preprocesamiento.
 
 ### Jenaro
 
 - Implementar la arquitectura MLP.
-- Definir capas ocultas, neuronas, activaciones, funcion de salida, perdida y optimizador.
-- Entrenar una version base.
-- Comparar 2 o 3 configuraciones simples de hiperparametros.
+- Definir capas ocultas, neuronas, activaciones, funcion de salida, perdida y
+  optimizador.
+- Entrenar una version base y comparar arquitecturas.
 - Documentar decisiones tecnicas del modelo y entrenamiento.
 
 ### Jason
 
-- Realizar EDA: distribucion de clases y ejemplos visuales.
+- Interpretar distribucion de clases y ejemplos visuales.
 - Calcular metricas: accuracy, precision, recall y F1-score.
-- Construir matriz de confusion.
+- Construir e interpretar la matriz de confusion.
 - Seleccionar ejemplos bien y mal clasificados.
 - Redactar analisis de errores, limitaciones del MLP y conclusiones.
 
@@ -188,7 +218,7 @@ sign-language-mnist-mlp/
     raw/              # CSV originales extraidos del ZIP
     processed/        # Datos preparados si se guardan
   images/             # Graficos, matriz de confusion y ejemplos
-  models/             # Modelo entrenado
+  models/             # Modelo entrenado localmente
   notebooks/          # Notebook principal
   presentation/       # Guion o apoyo para exponer
   reports/            # Resultados y tablas exportadas
@@ -196,7 +226,7 @@ sign-language-mnist-mlp/
   src/sign_mlp/       # Codigo reutilizable del proyecto
 ```
 
-## Instalacion
+## Instalacion y ejecucion
 
 Se recomienda trabajar en Google Colab si TensorFlow da problemas en Windows.
 
@@ -205,7 +235,7 @@ Para ejecutar localmente:
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+python -m pip install -r requirements-jenaro.txt
 ```
 
 Luego preparar el dataset:
@@ -214,41 +244,60 @@ Luego preparar el dataset:
 python scripts\prepare_data.py --zip "C:\Users\gonza\Downloads\Sign Language MNIST.zip"
 ```
 
-Despues abrir y ejecutar:
+Despues abrir y ejecutar el notebook principal:
 
 ```powershell
-jupyter notebook notebooks\01_sign_language_mnist_mlp.ipynb
+jupyter notebook notebooks\02_sign_language_mnist_mlp_jenaro.ipynb
 ```
+
+Para ejecutar y guardar las salidas desde terminal:
+
+```powershell
+jupyter nbconvert --to notebook --execute --inplace notebooks\02_sign_language_mnist_mlp_jenaro.ipynb --ExecutePreprocessor.timeout=1800
+```
+
+Los CSV originales y el modelo binario no se suben al repositorio porque son
+archivos pesados o regenerables. Para reproducir el proyecto se debe extraer el
+ZIP original y ejecutar el notebook.
 
 ## Metodologia CRISP-DM
 
-1. Comprension del negocio: reconocer letras de lenguaje de senas como apoyo educativo o de accesibilidad.
-2. Comprension de los datos: analizar cantidad de clases, ejemplos por clase y formato de imagen.
-3. Preparacion de datos: normalizar pixeles, separar entrenamiento/validacion/prueba y adaptar las imagenes a vectores.
-4. Modelamiento: implementar un MLP con capas densas.
-5. Evaluacion: revisar metricas, curvas de entrenamiento y matriz de confusion.
-6. Despliegue/documentacion: dejar repositorio reproducible y explicar limitaciones.
+1. Comprension del negocio: reconocer letras de lenguaje de senas como apoyo
+   educativo o de accesibilidad.
+2. Comprension de los datos: analizar cantidad de clases, ejemplos por clase y
+   formato de imagen.
+3. Preparacion de datos: normalizar pixeles, separar entrenamiento, validacion
+   y prueba, y adaptar las imagenes a vectores.
+4. Modelamiento: implementar y comparar MLP con capas densas.
+5. Evaluacion: revisar metricas, curvas de entrenamiento, matriz de confusion y
+   ejemplos correctos e incorrectos.
+6. Documentacion: dejar repositorio reproducible y explicar limitaciones.
 
 ## Preguntas que deben saber responder
 
 - Por que se eligio este dataset.
 - Que problema de clasificacion resuelve el modelo.
+- Por que el problema es multiclase y no binario.
 - Que es un MLP y como procesa una imagen.
 - Por que las imagenes se transforman de 28x28 a un vector de 784 valores.
 - Que significan accuracy, precision, recall, F1-score y matriz de confusion.
-- Que indica el sobreajuste en las curvas de entrenamiento.
+- Por que se usa softmax con 24 salidas.
+- Por que se usa one-hot encoding con `categorical_crossentropy`.
+- Que diferencia hay entre train, validacion y test.
+- Que significa que el modelo tenga 100% en validacion pero 79.71% en test.
 - Por que un MLP no es la mejor arquitectura para imagenes.
-- Que mejoras se podrian implementar despues, por ejemplo CNN, data augmentation o ajuste de hiperparametros.
+- Que mejoras se podrian implementar despues, por ejemplo CNN, data augmentation
+  o ajuste de hiperparametros.
 
 ## Checklist de rubrica
 
-- [ ] Problema definido y dataset justificado.
-- [ ] Variante propia del trabajo documentada.
-- [ ] Carga y preprocesamiento explicado.
-- [x] MLP implementado y justificado (aporte de Jenaro, notebook 02).
-- [x] Entrenamiento y validacion registrados (aporte de Jenaro, notebook 02).
-- [ ] Accuracy, precision, recall, F1-score y matriz de confusion calculados.
-- [ ] Ejemplos correctos e incorrectos analizados.
-- [ ] Limitaciones del MLP explicadas.
-- [ ] README y notebook limpios.
+- [x] Problema definido y dataset justificado.
+- [x] Variante propia del trabajo documentada.
+- [x] Carga y preprocesamiento explicado.
+- [x] MLP implementado y justificado.
+- [x] Entrenamiento y validacion registrados.
+- [x] Accuracy, precision, recall, F1-score y matriz de confusion calculados.
+- [x] Ejemplos correctos e incorrectos analizados.
+- [x] Limitaciones del MLP explicadas.
+- [x] README actualizado con resultados actuales.
 - [ ] Presentacion ensayada por los tres integrantes.
