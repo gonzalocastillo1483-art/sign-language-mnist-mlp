@@ -364,51 +364,6 @@ En los ejemplos aparecen casos como B predicha como U, N como A y F como C. Son 
 
 
 
-### 11.1 Matriz de confusión
-
-![Matriz de confusión del modelo seleccionado](images/jenaro_integracion_confusion_matrix.png)
-
-*Figura 4. Clases reales en filas y predicciones en columnas. La diagonal representa aciertos y las celdas fuera de ella representan confusiones.*
-
-La matriz permite localizar las letras que reciben predicciones incorrectas de otras clases. Al estar expresada en cantidades, su intensidad también depende del número de ejemplos de cada letra. Debe leerse junto con las métricas por clase y sus soportes, y no solo por el tono de las celdas.
-
-### 11.2 Desempeño por letra
-
-| Letra | Precision | Recall | F1 | Soporte en test |
-| --- | ---: | ---: | ---: | ---: |
-| B | 0,99 | 0,95 | 0,97 | 432 |
-| A | 0,88 | 1,00 | 0,94 | 331 |
-| E | 0,89 | 1,00 | 0,94 | 498 |
-| P | 0,94 | 0,89 | 0,91 | 347 |
-| C | 0,87 | 0,93 | 0,90 | 310 |
-| U | 0,72 | 0,55 | 0,63 | 266 |
-| N | 0,71 | 0,54 | 0,61 | 291 |
-| T | 0,60 | 0,59 | 0,59 | 248 |
-| R | 0,49 | 0,72 | 0,58 | 144 |
-| S | 0,58 | 0,48 | 0,52 | 246 |
-
-La tabla muestra una selección de letras con mejores y peores F1. El [reporte completo](reports/jenaro_integracion_classification_report.txt) contiene las 24 clases. Los valores por clase están redondeados a dos decimales.
-
-B presenta un desempeño alto en ambas métricas. S tiene recall 0,48, por lo que se omite más de la mitad de sus imágenes reales, considerando el redondeo del reporte. R tiene precision 0,49: muchas predicciones de R corresponden a otras letras. Estos casos demuestran por qué la accuracy global no basta para describir el modelo.
-
-### 11.3 Ejemplos correctamente clasificados
-
-![Ejemplos de predicciones correctas](images/jenaro_integracion_correct_examples.png)
-
-*Figura 5. Ejemplos con etiqueta real y predicción coincidentes, entre ellos G, F, K, A, D, V y O.*
-
-Estos aciertos muestran que el modelo reconoce patrones útiles en varias letras. Sin embargo, un acierto individual no garantiza que todos los ejemplos de esa letra se clasifiquen bien. Por ejemplo, K aparece entre los ejemplos correctos, aunque su F1 global por clase es 0,68.
-
-### 11.4 Ejemplos incorrectamente clasificados
-
-![Ejemplos de predicciones incorrectas](images/jenaro_integracion_incorrect_examples.png)
-
-*Figura 6. Errores observados en el test, con la clase real y la clase predicha.*
-
-Entre los ejemplos aparecen B predicha como U, D como X, N como A, S como I, T como X, N como S, U como D, U como Y y F como C. Son ejemplos concretos de la figura, no un ranking de las confusiones más frecuentes.
-
-La similitud entre posturas, la orientación de la mano y el contraste con el fondo podrían explicar parte de estos errores. Por ejemplo, en B predicha como U se aprecia una zona oscura lateral, pero observarla no demuestra que haya causado la predicción. Para probar esa hipótesis sería necesario comparar imágenes o condiciones controladas y medir su efecto.
-
 ## 12 Limitaciones e impacto ético
 
 ### 12.1 Limitaciones técnicas
