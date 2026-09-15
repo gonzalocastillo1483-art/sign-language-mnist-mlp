@@ -4,9 +4,11 @@
 
 **Integrantes:** Gonzalo Castillo, Jenaro Marín y Jason
 
-**Docente y sección:** [COMPLETAR]
+**Docente:** Jose Rojas
 
-**Fecha de entrega:** [COMPLETAR]
+**Sección:** 01V
+
+**Fecha de entrega:** 15/09/2026
 
 ## Reparto para completar el informe
 
@@ -20,12 +22,12 @@ cada responsable debe completar su explicación y comprobar que coincida con el
 notebook. El estado de esta tabla corresponde a la redacción del informe, no a la
 existencia del código de cada integrante, que ya está integrado en el repositorio.
 
-| Responsable | Secciones a cargo | Qué debe cerrar |
+| Responsable | Secciones a cargo | Contenido y estado |
 | --- | --- | --- |
 | **Gonzalo Castillo** | 1 a 4, 5.1, 6 y 7 | Problema, variante propia acordada, objetivos, KPIs, referencia del dataset, calidad, CRISP-DM y justificación de la preparación |
 | **Jenaro Marín** | **8 y 9** | **Aporte desarrollado:** MLP, entrenamiento, comparación y elección del modelo |
 | **Jason** | 5.2 y 5.3, 10 a 13 | Interpretación de distribución e imágenes, métricas de test, matriz, aciertos, errores, limitaciones, impacto ético y conclusiones |
-| **Todo el equipo** | Identificación, resumen, 14 y 15, anexos | Datos administrativos, síntesis final, referencias, revisión de reproducción y ensayo |
+| **Todo el equipo** | Identificación, resumen, 14 y 15, anexos | **Contenido desarrollado:** identificación, síntesis, reproducción, fuentes y guía de defensa. Quedan la revisión de la ejecución final y el ensayo conjunto |
 
 **Gonzalo:** completar la variante y la procedencia del dataset, explicar las
 decisiones de preparación y verificar los resultados de calidad dentro del notebook.
@@ -35,13 +37,13 @@ Al terminar, retirar las notas de trabajo y actualizar las casillas del anexo B.
 
 ## Resumen
 
-> **Equipo:** revisar esta síntesis después de completar los apartados de Gonzalo y Jason.
-
 Desarrollamos un clasificador de imágenes de letras estáticas de ASL con el dataset Sign Language MNIST, aprobado por el profesor para este proyecto. El trabajo aplica los contenidos de perceptrón, redes Fully Connected, descenso del gradiente y evaluación de modelos vistos en clases. Su finalidad es comprender y explicar el flujo de aprendizaje supervisado, además de medir el desempeño obtenido.
+
+El dataset contiene 34.627 imágenes de 28 × 28 píxeles y 24 clases. Utilizamos 21.964 imágenes para entrenamiento, 5.491 para validación y 7.172 del test oficial. La preparación divide las intensidades por 255, organiza 784 entradas por imagen y codifica las etiquetas en 24 posiciones mediante one-hot. Mantenemos las mismas particiones y un protocolo de 20 épocas, batch de 128 y Adam con learning rate 0,001 para comparar las arquitecturas.
 
 Comparamos tres MLP con la misma preparación de datos y el mismo protocolo de entrenamiento. La configuración de 512, 256 y 128 neuronas ocultas obtuvo el mejor F1 macro de validación y se seleccionó antes de evaluar el test oficial. En test alcanzó **79,71% de accuracy y 0,7760 de F1 macro**, frente a 100% de accuracy en validación. La diferencia de 20,29 puntos porcentuales muestra que la validación interna fue optimista respecto de ese test. El modelo aprende patrones útiles, pero sus errores y la desigualdad entre letras limitan su uso como apoyo educativo fuera de las condiciones evaluadas.
 
-El informe presenta el problema, las decisiones de preparación y modelado, la interpretación de los resultados y las instrucciones para reproducir el proyecto. El anexo final reúne las comprobaciones pendientes antes de entregar.
+La principal conclusión es que un resultado alto en validación no basta para asegurar utilidad fuera de ese conjunto. La evaluación por letra y los ejemplos de errores permiten fundamentar esa limitación. El repositorio reúne el código, los dos CSV originales, el notebook documentado y las evidencias del experimento. Este informe relaciona esas evidencias con las decisiones técnicas y organiza la reproducción y defensa del trabajo.
 
 ## 1 Descripción del problema de negocio
 
@@ -409,7 +411,7 @@ En experiencias posteriores podrían estudiarse CNN o aumentación de datos para
 
 ## 14 Reproducción y organización de la entrega
 
-> **Equipo — revisar:** probar la ejecución desde un clon completo con las dependencias instaladas y revisar la coherencia entre resultados, notebook e informe.
+La entrega se organiza como un proyecto reproducible: los datos se incluyen en el repositorio, el notebook principal contiene el flujo de trabajo y los reportes conservan las métricas y configuraciones. La presentación sintetiza las decisiones y resultados para la defensa de TLY1102, sección 01V, con el docente Jose Rojas.
 
 ### 14.1 Archivos y entorno
 
@@ -452,26 +454,42 @@ El modelo binario permanece fuera de Git porque se genera al ejecutar el noteboo
 
 ### 14.2 Pasos de ejecución
 
-Desde la raíz del proyecto en PowerShell:
+Para obtener una copia nueva, ejecutar en PowerShell desde la carpeta donde se desea guardar el proyecto:
+
+```powershell
+git clone https://github.com/gonzalocastillo1483-art/sign-language-mnist-mlp.git
+cd sign-language-mnist-mlp
+```
+
+Si ya se dispone del proyecto, comenzar desde su raíz. Crear el entorno con Python 3.13.6, versión utilizada en la ejecución de referencia, e instalar las dependencias:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements-jenaro.txt
 ```
 
-Los CSV ya están disponibles en `data/raw/`. Se puede continuar directamente con la apertura del notebook. El siguiente comando solo sirve para reconstruir los archivos desde una copia original del ZIP si fuera necesario, y no forma parte del arranque normal desde un clon:
+Los CSV ya están disponibles en `data/raw/`. No se necesita descargar el dataset por separado, extraerlo de nuevo ni modificar el código para apuntar a una carpeta de Descargas. Antes de entrenar se puede comprobar el entorno y la presencia de los datos:
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\prepare_data.py --zip "data\Sign Language MNIST.zip" --output "data\raw"
+.\.venv\Scripts\python.exe -m pip check
+Get-FileHash data/raw/sign_mnist_train.csv, data/raw/sign_mnist_test.csv -Algorithm SHA256
 ```
 
-Para abrir el notebook principal:
+Las huellas deben coincidir con las publicadas en [data/README.md](data/README.md). Para abrir el notebook principal con el Python del entorno:
 
 ```powershell
 .\.venv\Scripts\python.exe -m notebook notebooks\02_sign_language_mnist_mlp_jenaro.ipynb
 ```
 
 Seleccionar el entorno correcto, reiniciar el kernel y ejecutar las celdas desde el principio. La ejecución entrena las tres redes y puede regenerar reportes, figuras y el modelo. Si se desea conservar una ejecución anterior, guardar sus resultados en una copia del proyecto antes de volver a entrenar. Las diferencias de entorno pueden producir variaciones numéricas; cualquier nueva corrida debe mantener consistentes sus resultados y explicaciones.
+
+Como alternativa, se puede ejecutar el notebook completo desde terminal. Este comando guarda una copia con las salidas y conserva el archivo del notebook original, aunque el código sí regenera los artefactos del experimento en esa copia del proyecto:
+
+```powershell
+.\.venv\Scripts\python.exe -m nbconvert --to notebook --execute notebooks\02_sign_language_mnist_mlp_jenaro.ipynb --output 02_sign_language_mnist_mlp_ejecutado.ipynb --ExecutePreprocessor.timeout=1800
+```
+
+Al terminar, comprobar que ninguna celda haya registrado una excepción y que estén presentes la comparación de los tres modelos, las curvas, las métricas de test y los ejemplos. El archivo `models/jenaro_mlp.keras` se crea durante la ejecución. Si cambian los resultados, actualizar conjuntamente las cifras y su interpretación en el notebook, los reportes, el informe y la presentación.
 
 ### 14.3 Responsabilidades y defensa
 
@@ -483,15 +501,67 @@ Seleccionar el entorno correcto, reiniciar el kernel y ejecutar las celdas desde
 
 La presentación dura diez minutos y la evaluación de la defensa es individual. Cada integrante debe poder explicar también las partes de sus compañeros, debido a las preguntas cruzadas indicadas en la pauta. La [base de diapositivas](presentation/base_presentacion_equipo.md) y el [apoyo de Jenaro](presentation/jenaro_defensa.md) sirven para ensayar, contrastando siempre las cifras con los reportes actuales.
 
+Gonzalo establece el problema y explica cómo las imágenes llegan preparadas al modelo. Jenaro retoma ese punto para describir el MLP y justificar su elección mediante validación. Jason recibe el modelo seleccionado y explica cuánto se sostiene su desempeño en test, cuáles son sus errores y qué implican para el caso. Esta secuencia conecta las tres intervenciones con un mismo procedimiento.
+
+### 14.4 Comprobaciones de reproducción
+
+Se comprobó la carga desde un clon nuevo con las dependencias disponibles. Los CSV conservan exactamente las huellas del ZIP original y el módulo de preparación obtiene las siguientes entradas:
+
+| Comprobación | Resultado verificado |
+| --- | --- |
+| Datos incluidos | CSV de entrenamiento y test disponibles en `data/raw/` |
+| Entrenamiento preparado | 21.964 filas y 784 variables |
+| Validación preparada | 5.491 filas y 784 variables |
+| Test preparado | 7.172 filas y 784 variables |
+| Normalización | Valores entre 0 y 1 |
+| Etiquetas remapeadas | 24 índices consecutivos, de 0 a 23 |
+| Notebook publicado | Estructura y sintaxis válidas, 17 celdas de código con salidas guardadas y sin errores registrados |
+| Referencias locales | Archivos enlazados y seis figuras disponibles |
+
+Esta comprobación confirma la integridad de los insumos y la preparación desde el clon. No incluye una repetición del entrenamiento completo en ese clon ni sustituye el ensayo del equipo. La ejecución publicada aporta las salidas del experimento de referencia. El cierre de la entrega debe verificar que los resultados utilizados en la defensa correspondan a una misma ejecución.
+
+### 14.5 Organización del ensayo
+
+El primer ensayo consiste en recorrer las diez diapositivas respetando el reparto de tres, cuatro y tres minutos. Cada integrante debe explicar una decisión y una evidencia de su parte, sin limitarse a leer la pantalla. El segundo ensayo utiliza las preguntas del anexo B y permite que responda una persona distinta del responsable habitual de esa sección.
+
+Para cerrar el ensayo, contrastar las cifras mencionadas con los reportes, corregir afirmaciones que no estén respaldadas y comprobar que la suma de las intervenciones no exceda diez minutos. El ensayo queda como actividad del equipo y no se registra como realizado hasta llevarlo a cabo.
+
 ## 15 Referencias y evidencias
 
-> **Gonzalo:** completar la referencia del dataset. **Todo el equipo:** verificar que estén identificadas las fuentes utilizadas en sus secciones.
+Las referencias se organizan según su función: la pauta define lo que se evalúa, el material de clases aporta los fundamentos y los archivos del proyecto respaldan los resultados. Los materiales docentes conservan sus nombres de origen para facilitar su identificación. La ficha bibliográfica del dataset continúa asignada a Gonzalo en la sección 4.
+
+### 15.1 Pauta y contenidos de clases
 
 - **Pauta oficial:** `EP1_TLY1102_Instrucciones y Pauta PRESENTACIÓN_Estudiante.pdf`. Requisitos formales en páginas impresas 6 y 7, desarrollo y evaluación en 7 y 8, rúbrica en 10 y 11. Incluye un informe Markdown, notebook ejecutable, datos, organización del proyecto y defensa técnica.
 - **Fundamentos de clases:** `1.1.1 El Perceptrón (2).pptx`, `1.1.2_Notebook_Construir_un_Perceptron_Estudiante_JR (2).ipynb`, `1.2.1_PPT_Redes_Fully_Connected (2).pdf`, `JR_1.2.4_Notebook_Entrenando_una_Red_FF_Estudiante (1).ipynb` y `1.3.1 Descenso del Gradiente.pptx`.
 - **Diseño y evaluación de clases:** `1.3.4_Notebook_Loss_Gradiente_Estudiante.ipynb`, `1.4.1_PPT_Diseno_y_Evaluacion_Modelos (1).pptx`, `1.4.3_Diseño_Evaluacion_Modelos_Fully_Connected_Estudiante.ipynb` y `1.4.4_Notebook_Modelo_Keras_Metricas_Estudiante.ipynb`.
-- **Dataset utilizado:** `Sign Language MNIST.zip`. Completar referencia de procedencia en la sección 4.
-- **Implementación y resultados del equipo:** [versión del repositorio utilizada](https://github.com/gonzalocastillo1483-art/sign-language-mnist-mlp/tree/389909513ca2c3d29162d832fbbe74b70308a271), notebook 02 y archivos enlazados en cada sección. Las figuras provienen de los análisis del equipo.
+- **Dataset utilizado:** `Sign Language MNIST.zip`, del que provienen los dos CSV incluidos. La referencia de procedencia y las condiciones de uso se completan en la sección 4, a cargo de Gonzalo.
+
+| Contenido de clases | Aplicación al proyecto |
+| --- | --- |
+| Perceptrón | Pesos, sesgo, combinación de entradas y activación |
+| Redes Fully Connected | Capas densas y relación entre entradas, capas ocultas y salida |
+| Pérdida y descenso del gradiente | Interpretación del error, gradientes y actualización de parámetros |
+| Diseño y evaluación de modelos | Particiones, comparación de configuraciones e interpretación de curvas |
+| Keras y métricas | One-hot, softmax, categorical crossentropy, accuracy y métricas por clase |
+
+### 15.2 Evidencias del experimento
+
+Los resultados de referencia corresponden a [la versión del experimento integrada por el equipo](https://github.com/gonzalocastillo1483-art/sign-language-mnist-mlp/tree/389909513ca2c3d29162d832fbbe74b70308a271). La incorporación posterior de los CSV y de la documentación no representa un nuevo entrenamiento. Las figuras provienen de los análisis del equipo.
+
+| Evidencia | Archivo o ubicación | Qué permite comprobar |
+| --- | --- | --- |
+| Flujo completo | [Notebook 02](notebooks/02_sign_language_mnist_mlp_jenaro.ipynb) | Orden de preparación, entrenamiento y evaluación |
+| Datos originales | [Documentación del dataset](data/README.md) | Archivos incluidos, tamaños y huellas de integridad |
+| Preparación | [Reporte de Gonzalo](reports/gonzalo_preprocessing_summary.md) | Clases, particiones y normalización |
+| Decisiones y entorno | [Metadatos de entrenamiento](reports/jenaro_entrenamiento.json) | Semillas, hiperparámetros, versiones y criterio de selección |
+| Comparación de arquitecturas | [Tabla de validación](reports/jenaro_comparacion_validacion.csv) | Métricas de A, B y C con el mismo protocolo |
+| Evolución del aprendizaje | [Historial A](reports/jenaro_historial_A_pequena.csv), [historial B](reports/jenaro_historial_B_mediana.csv) e [historial C](reports/jenaro_historial_C_grande.csv) | Loss y accuracy por época |
+| Resultado global | [Métricas de test](reports/jenaro_integracion_test.json) | Accuracy 79,71%, F1 macro 0,7760 y brecha de 20,29 puntos |
+| Diferencias entre letras | [Reporte por clase](reports/jenaro_integracion_classification_report.txt) | Precision, recall, F1 y soporte de las 24 letras |
+| Evidencia visual | Figuras 1 a 6 de este informe, en `images/` | Distribución, ejemplos, curvas y matriz de confusión |
+
+Los valores globales se toman de los JSON y CSV sin sustituirlos por el redondeo de la fila general del reporte por clase. Las métricas por letra se muestran con los dos decimales disponibles en ese reporte. Esta distinción evita confundir un redondeo de 0,80 con una accuracy exacta de 80%.
 
 ## Anexo A Correspondencia con la rúbrica
 
@@ -517,7 +587,10 @@ Esta lista organiza el cierre del informe y del paquete completo. Las casillas p
 - [x] Presentar y justificar las tres arquitecturas, activaciones, pérdida y protocolo.
 - [x] Incorporar curvas, comparación, métricas finales y análisis de aciertos y errores.
 - [x] Discutir limitaciones, impacto ético y mejoras futuras sin presentarlas como resultados realizados.
-- [ ] Completar docente, sección, fecha y nombres de integrantes según la identificación requerida.
+- [x] Registrar el docente Jose Rojas, la sección 01V y los integrantes identificados en el proyecto.
+- [x] Desarrollar la síntesis, las instrucciones de reproducción, las referencias disponibles y la guía de defensa común.
+- [x] Registrar la fecha de entrega del 15/09/2026.
+- [ ] Completar la identificación de Jason si se requiere su nombre completo.
 - [ ] Cerrar la variante propia del grupo y verificar que la descripción coincida con el experimento.
 - [ ] Completar la referencia de procedencia y condiciones de uso del dataset.
 - [ ] Revisar las explicaciones antiguas del notebook: aparece una cifra de 79,17% que debe distinguirse de los resultados actuales de 79,71%. Revisar también afirmaciones de memorización o de que el 100% de validación no es real, porque esas causas no están demostradas.
@@ -525,7 +598,7 @@ Esta lista organiza el cierre del informe y del paquete completo. Las casillas p
 - [ ] Integrar las comprobaciones de calidad en el notebook si aún no aparecen, para que cada resultado del informe sea reproducible allí.
 - [x] Incluir los dos CSV originales en el repositorio, conservando `data/raw/` y documentando sus huellas.
 - [ ] Ejecutar el notebook completo desde un kernel reiniciado en una copia del paquete final y comprobar sus salidas. Registrar las versiones y revisar cualquier cambio de cifras tras esa ejecución.
-- [ ] Abrir el informe como Markdown y confirmar que las figuras y enlaces funcionan junto con las carpetas entregadas.
+- [x] Verificar que los enlaces a archivos locales y las seis figuras del informe existen dentro del repositorio.
 - [ ] Revisar conjuntamente el informe y el README para mantener una única versión de los resultados y eliminar los campos de trabajo una vez completados.
 - [ ] Ensayar la presentación de diez minutos y las preguntas cruzadas con los tres integrantes.
 
@@ -541,3 +614,16 @@ Esta lista organiza el cierre del informe y del paquete completo. Las casillas p
 8. ¿Qué conclusiones permite la brecha de 20,29 puntos y cuáles requieren más evidencia?
 9. ¿Qué error concreto del test pueden explicar como hipótesis y cómo lo comprobarían?
 10. ¿Qué modificarían en un próximo experimento y cómo evitarían tomar todas las decisiones mirando el test?
+
+### Respuestas de apoyo para las preguntas cruzadas
+
+1. **Problema y alcance.** Clasificamos imágenes estáticas en una de 24 letras de ASL como ejercicio y referencia para un posible apoyo educativo. No evaluamos traducción de conversaciones, reconocimiento en video ni una aplicación con usuarios.
+2. **Variante.** El experimento actual usa las 24 clases, semilla 42 y tres capacidades de MLP. Gonzalo debe cerrar con el equipo la variante propia solicitada por la pauta y reflejarla en la sección 1.2 y en el notebook. No debemos atribuir una selección de clases que no se realizó.
+3. **Preparación.** Dividir por 255 lleva las intensidades a 0–1. El remapeo resuelve los huecos de las etiquetas originales y permite representar 24 clases consecutivas. One-hot expresa la clase correcta en el formato requerido por la pérdida elegida.
+4. **Particiones.** Entrenamiento ajusta los pesos, validación permite comparar configuraciones y test evalúa el modelo elegido. Utilizar el test para decidir repetidamente convertiría sus resultados en parte del proceso de ajuste.
+5. **Componentes.** Los pesos y el sesgo forman una combinación de entradas, ReLU añade no linealidad y softmax produce la distribución entre clases. La pérdida compara esa distribución con la etiqueta y los gradientes orientan la actualización de los parámetros.
+6. **Selección.** C obtuvo F1 macro de validación 1,0000 y ganó bajo el criterio establecido. Tiene 569.240 parámetros frente a 110.296 de B. El costo en tamaño debe mencionarse aunque el criterio de este experimento priorice F1 macro.
+7. **Métricas.** Accuracy resume los aciertos totales. F1 macro da el mismo peso a cada letra, mientras precision y recall permiten diferenciar predicciones incorrectamente asignadas de letras que el modelo deja de reconocer.
+8. **Brecha.** La caída de 100% a 79,71% muestra que el desempeño no se mantiene entre validación y test. No demuestra por sí sola memorización ni identifica la causa de los errores.
+9. **Error concreto.** En la figura aparece una B predicha como U. La postura o el fondo podrían influir, pero son hipótesis. Habría que comparar ejemplos bajo condiciones controladas y medir el efecto para sostener una explicación causal.
+10. **Próximo experimento.** Podríamos cambiar épocas o learning rate, mantener las demás condiciones y registrar la comparación. Las decisiones deben apoyarse en validación y reservar una evaluación independiente para el resultado final.
