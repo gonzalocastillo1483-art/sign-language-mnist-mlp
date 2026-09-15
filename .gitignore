@@ -3,9 +3,11 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
-# Datos pesados: mantener fuera de GitHub, pero dejar carpetas creadas.
+# Publicar solo los dos CSV originales necesarios para ejecutar el notebook.
 data/raw/*
 !data/raw/.gitkeep
+!data/raw/sign_mnist_train.csv
+!data/raw/sign_mnist_test.csv
 data/processed/*
 !data/processed/.gitkeep
 

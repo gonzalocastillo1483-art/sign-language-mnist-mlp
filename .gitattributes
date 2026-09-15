@@ -1,0 +1,3 @@
+# Conservar exactamente los bytes originales del dataset en cualquier sistema.
+data/raw/sign_mnist_train.csv -text whitespace=cr-at-eol
+data/raw/sign_mnist_test.csv -text whitespace=cr-at-eol

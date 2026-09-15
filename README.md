@@ -54,6 +54,8 @@ El notebook 01 se conserva como version inicial del equipo.
 
 - [Base del informe tecnico](INFORME_TECNICO_BASE.md), con desarrollo del caso,
   evidencias, correspondencia con la rubrica y pendientes antes de entregar.
+  Las secciones 8 y 9 contienen el aporte desarrollado de Jenaro. El informe
+  identifica los apartados que Gonzalo y Jason deben revisar y completar.
 - [Presentacion base en PowerPoint](presentation/archivos/Sign_Language_MNIST_base_final.pptx)
   y [notas para organizar la exposicion](presentation/base_presentacion_equipo.md).
 - `README.md` con problema, objetivos, KPIs, metodologia, resultados y
@@ -242,11 +244,9 @@ python -m venv .venv
 python -m pip install -r requirements-jenaro.txt
 ```
 
-Luego preparar el dataset:
-
-```powershell
-python scripts\prepare_data.py --zip "C:\Users\gonza\Downloads\Sign Language MNIST.zip"
-```
+Los CSV ya vienen incluidos en `data/raw/` al clonar o descargar el repositorio
+completo. No es necesario extraer un ZIP ni modificar rutas personales.
+Ver [archivos e integridad del dataset](data/README.md).
 
 Despues abrir y ejecutar el notebook principal:
 
@@ -260,9 +260,9 @@ Para ejecutar y guardar las salidas desde terminal:
 jupyter nbconvert --to notebook --execute --inplace notebooks\02_sign_language_mnist_mlp_jenaro.ipynb --ExecutePreprocessor.timeout=1800
 ```
 
-Los CSV originales y el modelo binario no se suben al repositorio porque son
-archivos pesados o regenerables. Para reproducir el proyecto se debe extraer el
-ZIP original y ejecutar el notebook.
+El repositorio incluye los dos CSV originales. El modelo binario se genera al
+ejecutar el notebook y permanece fuera de Git. Se necesitan las dependencias
+de Python indicadas arriba, pero no una descarga adicional del dataset.
 
 ## Metodologia CRISP-DM
 

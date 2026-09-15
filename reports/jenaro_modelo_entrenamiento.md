@@ -38,7 +38,7 @@ Se selecciona **C_grande**, capas (512, 256, 128), con 569,240 parámetros. Su F
 
 Aplanar conserva los valores de los píxeles, pero las capas densas no usan filtros de vecindad espacial. El resultado de validación no demuestra desempeño en personas nuevas, fondos nuevos o señas en movimiento. El test se consulta solo después de elegir el modelo. El análisis de errores y las conclusiones del equipo corresponden a Jason.
 
-Modelo local: `models/jenaro_mlp.keras`. Mapeo, versiones y huellas: `jenaro_entrenamiento.json`. Recarga del modelo comprobada sobre 128 imágenes de validación. El modelo y los CSV no se versionan; pueden regenerarse ejecutando el notebook.
+Modelo local: `models/jenaro_mlp.keras`. Mapeo, versiones y huellas: `jenaro_entrenamiento.json`. Recarga del modelo comprobada sobre 128 imágenes de validación en la ejecución de referencia. El modelo no se versiona y se genera al ejecutar el notebook. Los dos CSV originales están incluidos en `data/raw/` para ejecutar desde un clon completo.
 
 ## Reproducción y fuentes
 
