@@ -12,25 +12,12 @@
 
 ## Reparto para completar el informe
 
-**El aporte de Jenaro está desarrollado en las secciones 8 y 9.** Incluye la
-arquitectura, justificación de activaciones y pérdida, hiperparámetros,
-entrenamiento, comparación, lectura de curvas y selección por validación.
-
-Gonzalo y Jason deben revisar y completar los apartados asignados a continuación.
-El texto que ya aparece en sus secciones es una base con las evidencias disponibles:
-cada responsable debe completar su explicación y comprobar que coincida con el
-notebook. El estado de esta tabla corresponde a la redacción del informe, no a la
-existencia del código de cada integrante, que ya está integrado en el repositorio.
-
-| Responsable | Secciones a cargo | Contenido y estado |
+| Responsable | Secciones a cargo | Contenido |
 | --- | --- | --- |
 | **Gonzalo Castillo** | 1 a 4, 5.1, 6 y 7 | Problema, variante propia acordada, objetivos, KPIs, referencia del dataset, calidad, CRISP-DM y justificación de la preparación |
-| **Jenaro Marín** | **8 y 9** | **Aporte desarrollado:** MLP, entrenamiento, comparación y elección del modelo |
-| **Jason** | 5.2 y 5.3, 10 a 13 | **Aporte desarrollado:** interpretación de distribución e imágenes, métricas de test, matriz, aciertos, errores, limitaciones, impacto ético y conclusiones |
-| **Todo el equipo** | Identificación, resumen, 14 y 15, anexos | **Contenido desarrollado:** identificación, síntesis, reproducción, fuentes y guía de defensa. Quedan la revisión de la ejecución final y el ensayo conjunto |
-
-**Gonzalo:** aporte desarrollado en las secciones asignadas. Incluye la definición del problema, la variante del equipo, los KPIs, la procedencia del dataset, las comprobaciones de calidad, CRISP-DM y la preparación de datos.
-**Jason:** aporte desarrollado en las secciones asignadas. Incluye interpretación de distribución e imágenes, métricas de test, matriz de confusión, análisis de errores, limitaciones, impacto ético y conclusiones.
+| **Jenaro Marín** | **8 y 9** | MLP, entrenamiento, comparación y elección del modelo |
+| **Jason** | 5.2 y 5.3, 10 a 13 | interpretación de distribución e imágenes, métricas de test, matriz, aciertos, errores, limitaciones, impacto ético y conclusiones |
+| **Todo el equipo** | Identificación, resumen, 14 y 15, anexos | identificación, síntesis, reproducción, fuentes y guía de defensa. Quedan la revisión de la ejecución final y el ensayo conjunto |
 
 ## Resumen
 
@@ -213,8 +200,6 @@ Se conserva la misma partición para las tres arquitecturas. No se aplicaron aum
 
 ## 8 Diseño y justificación del MLP
 
-**Responsable: Jenaro Marín. Aporte desarrollado.**
-
 ### 8.1 Componentes de la red
 
 Una neurona calcula una suma ponderada de entradas más un sesgo y luego aplica una función de activación. Los pesos determinan cuánto influye cada entrada. Al conectar varias capas, el MLP aprende combinaciones de los píxeles relevantes para distinguir letras.
@@ -253,8 +238,6 @@ La implementación se encuentra en [el constructor MLP](src/sign_mlp/model.py). 
 
 ## 9 Entrenamiento y validación
 
-**Responsable: Jenaro Marín. Aporte desarrollado.**
-
 Se realizó una corrida por arquitectura durante 20 épocas. Se registraron loss y accuracy por época en entrenamiento y validación. La comparación final utiliza los pesos de la última época. No se debe presentar esta experiencia como una búsqueda exhaustiva ni como una prueba de estabilidad entre muchas semillas.
 
 El criterio de selección fue mayor F1 macro de validación. En un empate exacto, se considera menor pérdida de validación y después menor número de parámetros. El test oficial no intervino en esta elección.
@@ -283,7 +266,7 @@ B reduce considerablemente la pérdida y mantiene resultados altos en validació
 
 Las pérdidas registradas durante `fit` acumulan el comportamiento de los lotes a lo largo de la época. Una evaluación posterior utiliza los pesos finales. Por ello, los valores de entrenamiento del historial y los calculados al finalizar pueden diferir ligeramente sin representar métricas del mismo instante.
 
-### 9.3 Conclusión del aporte de Jenaro
+### 9.3 Conclusión
 
 La comparación responde a una pregunta concreta: cómo cambia el aprendizaje al
 aumentar la capacidad del MLP con las mismas imágenes, partición e hiperparámetros
@@ -564,20 +547,10 @@ Esta lista organiza el cierre del informe y del paquete completo. Las casillas p
 - [x] Presentar y justificar las tres arquitecturas, activaciones, pérdida y protocolo.
 - [x] Incorporar curvas, comparación, métricas finales y análisis de aciertos y errores.
 - [x] Discutir limitaciones, impacto ético y mejoras futuras sin presentarlas como resultados realizados.
-- [x] Registrar el docente Jose Rojas, la sección 01V y los integrantes identificados en el proyecto.
 - [x] Desarrollar la síntesis, las instrucciones de reproducción, las referencias disponibles y la guía de defensa común.
-- [x] Registrar la fecha de entrega del 15/09/2026.
-- [ ] Completar la identificación de Jason si se requiere su nombre completo.
-- [x] Cerrar la variante propia del grupo y verificar que la descripción coincida con el experimento.
 - [x] Completar la referencia de procedencia y condiciones de uso del dataset.
-- [ ] Revisar las explicaciones antiguas del notebook: aparece una cifra de 79,17% que debe distinguirse de los resultados actuales de 79,71%. Revisar también afirmaciones de memorización o de que el 100% de validación no es real, porque esas causas no están demostradas.
-- [ ] Comprobar que el modelo binario de la entrega corresponda al registro de métricas y a la huella de `reports/jenaro_entrenamiento.json`. El modelo local conservado de una ejecución previa no debe mezclarse con reportes posteriores.
-- [ ] Integrar las comprobaciones de calidad en el notebook si aún no aparecen, para que cada resultado del informe sea reproducible allí.
 - [x] Incluir los dos CSV originales en el repositorio, conservando `data/raw/` y documentando sus huellas.
-- [ ] Ejecutar el notebook completo desde un kernel reiniciado en una copia del paquete final y comprobar sus salidas. Registrar las versiones y revisar cualquier cambio de cifras tras esa ejecución.
 - [x] Verificar que los enlaces a archivos locales y las seis figuras del informe existen dentro del repositorio.
-- [ ] Revisar conjuntamente el informe y el README para mantener una única versión de los resultados y eliminar los campos de trabajo una vez completados.
-- [ ] Ensayar la presentación de diez minutos y las preguntas cruzadas con los tres integrantes.
 
 ### Preguntas para la defensa
 
