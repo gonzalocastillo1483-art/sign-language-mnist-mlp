@@ -154,4 +154,4 @@ Repositorio: https://github.com/gonzalocastillo1483-art/sign-language-mnist-mlp/
 - presentation/guion.md: distribución de responsabilidades y tiempo.
 
 Criterio de contenido: pauta EP1 TLY1102 y material de clases aportado por el equipo, especialmente el notebook 1.4.4 sobre Keras y métricas. No se incorporan técnicas nuevas como parte del modelo realizado.
-La cifra antigua de test 79,17% quedó reemplazada por 79,71% en los resultados actuales; no mezclar versiones.
+Las cifras de referencia son 79,71% de accuracy y 0,7760 de F1 macro en test; corresponden a los reportes publicados.

@@ -52,11 +52,19 @@ El notebook 01 se conserva como version inicial del equipo.
 
 ## Entregables
 
-- [Base del informe tecnico](INFORME_TECNICO_BASE.md), con desarrollo del caso,
-  evidencias, correspondencia con la rubrica y pendientes antes de entregar.
-  Las secciones 8 y 9 contienen el aporte desarrollado de Jenaro. El informe
-  identifica los apartados que Gonzalo y Jason deben revisar y completar.
-- [Presentacion base en PowerPoint](presentation/archivos/Sign_Language_MNIST_base_final.pptx)
+Repositorio: https://github.com/gonzalocastillo1483-art/sign-language-mnist-mlp
+
+Para la entrega se adjuntan el ZIP del proyecto, el notebook principal, la
+presentación y el informe Markdown. El ZIP conserva las carpetas necesarias
+para ejecutar y consultar las figuras. La copia separada del notebook sirve
+para revisar sus salidas; para reentrenar debe abrirse dentro del proyecto.
+Al ejecutar se regeneran reportes, figuras y modelo: usar una copia del proyecto
+si se desea conservar los resultados de referencia.
+
+
+- [Informe tecnico](INFORME_TECNICO.md), con el desarrollo del caso,
+  evidencias, correspondencia con la rubrica y aportes completos del equipo.
+- [Presentacion en PowerPoint](presentation/archivos/Sign_Language_MNIST_base_final.pptx)
   y [notas para organizar la exposicion](presentation/base_presentacion_equipo.md).
 - `README.md` con problema, objetivos, KPIs, metodologia, resultados y
   conclusiones.
@@ -234,7 +242,8 @@ sign-language-mnist-mlp/
 
 ## Instalacion y ejecucion
 
-Se recomienda trabajar en Google Colab si TensorFlow da problemas en Windows.
+Entorno de verificación: Python 3.13.6 en Windows, con las dependencias fijadas.
+El notebook utiliza `src/` y los CSV del proyecto; descomprimir primero el ZIP completo.
 
 Para ejecutar localmente:
 
@@ -257,7 +266,7 @@ jupyter notebook notebooks\02_sign_language_mnist_mlp_jenaro.ipynb
 Para ejecutar y guardar las salidas desde terminal:
 
 ```powershell
-jupyter nbconvert --to notebook --execute --inplace notebooks\02_sign_language_mnist_mlp_jenaro.ipynb --ExecutePreprocessor.timeout=1800
+jupyter nbconvert --to notebook --execute notebooks\02_sign_language_mnist_mlp_jenaro.ipynb --output 02_sign_language_mnist_mlp_ejecutado.ipynb --ExecutePreprocessor.timeout=1800
 ```
 
 El repositorio incluye los dos CSV originales. El modelo binario se genera al

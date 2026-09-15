@@ -60,7 +60,7 @@ Una opinión que podemos defender con esta ejecución es: el MLP resulta útil
 como primera experiencia de clasificación de estas imágenes y permite ver
 el efecto de la capacidad. La red grande obtuvo el mejor resultado de
 validación bajo nuestro protocolo, pero ese resultado fue optimista: en
-test acertó el 79,17%, es decir, se equivocó aproximadamente en una de cada
+test acertó el 79,71%, es decir, se equivocó aproximadamente en una de cada
 cinco imágenes. Por eso el 100% de validación no basta para calificar el
 modelo como confiable para una aplicación de accesibilidad.
 
@@ -96,7 +96,7 @@ reconocimiento en personas nuevas, fondos distintos o señas en movimiento.
 | ¿Qué cambia con el learning rate? | La escala de la actualización. Muy alto puede causar oscilaciones; muy bajo puede retrasar el aprendizaje. |
 | ¿Qué diferencia hay entre train, validación y test? | Train ajusta pesos; validación ayuda a seleccionar; test estima desempeño después de seleccionar. |
 | ¿Más parámetros siempre mejora? | No. La tabla y las curvas permiten comparar beneficio, costo y posible sobreajuste. |
-| ¿El modelo es bueno o malo? | Depende del propósito. Es útil para estudiar el flujo y comparar capacidades; el 79,17% de test y la diferencia con validación muestran límites para un uso automático confiable. |
+| ¿El modelo es bueno o malo? | Depende del propósito. Es útil para estudiar el flujo y comparar capacidades; el 79,71% de test y la diferencia con validación muestran límites para un uso automático confiable. |
 | ¿Qué aprendemos del modelo pequeño? | Su pérdida sigue bajando y sus aciertos son menores. Puede faltar capacidad o más entrenamiento; este experimento no separa ambas causas. |
 | ¿Podemos afirmar por qué baja el resultado en test? | Observamos una dificultad de generalización. Sobreajuste, semejanza entre imágenes de train/validación o diferencias entre conjuntos son hipótesis a investigar, no causas demostradas. |
 | ¿Se pierde información al aplanar? | Los valores de los píxeles se conservan, pero una capa densa no incorpora filtros locales que aprovechen explícitamente la vecindad espacial. |

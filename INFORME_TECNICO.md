@@ -10,14 +10,16 @@
 
 **Fecha de entrega:** 15/09/2026
 
-## Reparto para completar el informe
+**Repositorio:** https://github.com/gonzalocastillo1483-art/sign-language-mnist-mlp
+
+## Aportes del equipo
 
 | Responsable | Secciones a cargo | Contenido |
 | --- | --- | --- |
 | **Gonzalo Castillo** | 1 a 4, 5.1, 6 y 7 | Problema, variante propia acordada, objetivos, KPIs, referencia del dataset, calidad, CRISP-DM y justificación de la preparación |
 | **Jenaro Marín** | **8 y 9** | MLP, entrenamiento, comparación y elección del modelo |
 | **Jason** | 5.2 y 5.3, 10 a 13 | interpretación de distribución e imágenes, métricas de test, matriz, aciertos, errores, limitaciones, impacto ético y conclusiones |
-| **Todo el equipo** | Identificación, resumen, 14 y 15, anexos | identificación, síntesis, reproducción, fuentes y guía de defensa. Quedan la revisión de la ejecución final y el ensayo conjunto |
+| **Todo el equipo** | Identificación, resumen, 14 y 15, anexos | Identificación, síntesis, reproducción, fuentes y guía de defensa |
 
 ## Resumen
 
@@ -375,11 +377,11 @@ La entrega se organiza como un proyecto reproducible: los datos se incluyen en e
 
 ### 14.1 Archivos y entorno
 
-La ejecución de referencia está documentada con Python 3.13.6, TensorFlow 2.20.0 y Keras 3.15.1. Las dependencias completas están fijadas en [requirements-jenaro.txt](requirements-jenaro.txt). Las versiones, semillas, mapeo y huellas de los archivos se registran en [los metadatos de entrenamiento](reports/jenaro_entrenamiento.json). El equipo debe conservar una ejecución consistente de notebook, reportes y modelo.
+Los metadatos de la corrida de referencia registran Python 3.12.3, TensorFlow 2.20.0 y Keras 3.15.1. La ejecución completa de esta entrega se verificó con Python 3.13.6 y las dependencias fijadas en [requirements-jenaro.txt](requirements-jenaro.txt). Las versiones, semillas, mapeo y huellas de los archivos se registran en [los metadatos de entrenamiento](reports/jenaro_entrenamiento.json). Los resultados publicados se conservan como corrida de referencia; la comprobación de ejecución se realiza en una copia aislada.
 
 ```text
 sign-language-mnist-mlp/
-  INFORME_TECNICO_BASE.md
+  INFORME_TECNICO.md
   README.md
   requirements-jenaro.txt
   data/raw/
@@ -421,7 +423,7 @@ git clone https://github.com/gonzalocastillo1483-art/sign-language-mnist-mlp.git
 cd sign-language-mnist-mlp
 ```
 
-Si ya se dispone del proyecto, comenzar desde su raíz. Crear el entorno con Python 3.13.6, versión utilizada en la ejecución de referencia, e instalar las dependencias:
+Si ya se dispone del proyecto, comenzar desde su raíz. Crear el entorno con Python 3.13.6, versión utilizada para verificar esta entrega, e instalar las dependencias:
 
 ```powershell
 python -m venv .venv
@@ -475,10 +477,10 @@ Se comprobó la carga desde un clon nuevo con las dependencias disponibles. Los 
 | Test preparado | 7.172 filas y 784 variables |
 | Normalización | Valores entre 0 y 1 |
 | Etiquetas remapeadas | 24 índices consecutivos, de 0 a 23 |
-| Notebook publicado | Estructura y sintaxis válidas, 17 celdas de código con salidas guardadas y sin errores registrados |
+| Notebook publicado | 17 celdas de código ejecutadas de principio a fin sin errores en una copia aislada; incluye entrenamiento, evaluación y recarga del modelo |
 | Referencias locales | Archivos enlazados y seis figuras disponibles |
 
-Esta comprobación confirma la integridad de los insumos y la preparación desde el clon. No incluye una repetición del entrenamiento completo en ese clon ni sustituye el ensayo del equipo. La ejecución publicada aporta las salidas del experimento de referencia. El cierre de la entrega debe verificar que los resultados utilizados en la defensa correspondan a una misma ejecución.
+El 15/09/2026 se repitió el notebook completo en una copia aislada, con Python 3.13.6 y las dependencias fijadas, sin excepciones. Se comprobaron también la recarga del modelo y la generación de reportes y figuras. La repetición mostró pequeñas diferencias numéricas respecto de la corrida de referencia, cuyos metadatos registran Python 3.12.3 y recursos de ejecución predeterminados. Fijar la semilla no garantiza resultados idénticos entre entornos. Para mantener trazabilidad, las métricas y figuras publicadas, el informe y la presentación conservan la corrida de referencia de 79,71% en test; la verificación no se utiliza para seleccionar otra arquitectura. Se añadió al notebook la salida de las comprobaciones de calidad sobre los mismos CSV originales.
 
 ### 14.5 Organización del ensayo
 
@@ -488,7 +490,7 @@ Para cerrar el ensayo, contrastar las cifras mencionadas con los reportes, corre
 
 ## 15 Referencias y evidencias
 
-Las referencias se organizan según su función: la pauta define lo que se evalúa, el material de clases aporta los fundamentos y los archivos del proyecto respaldan los resultados. Los materiales docentes conservan sus nombres de origen para facilitar su identificación. La ficha bibliográfica del dataset continúa asignada a Gonzalo en la sección 4.
+Las referencias se organizan según su función: la pauta define lo que se evalúa, el material de clases aporta los fundamentos y los archivos del proyecto respaldan los resultados. Los materiales docentes conservan sus nombres de origen para facilitar su identificación. La ficha bibliográfica del dataset se detalla en la sección 4.
 
 ### 15.1 Pauta y contenidos de clases
 
@@ -507,7 +509,7 @@ Las referencias se organizan según su función: la pauta define lo que se eval�
 
 ### 15.2 Evidencias del experimento
 
-Los resultados de referencia corresponden a [la versión del experimento integrada por el equipo](https://github.com/gonzalocastillo1483-art/sign-language-mnist-mlp/tree/389909513ca2c3d29162d832fbbe74b70308a271). La incorporación posterior de los CSV y de la documentación no representa un nuevo entrenamiento. Las figuras provienen de los análisis del equipo.
+Los resultados de referencia corresponden a [la versión del experimento integrada por el equipo](https://github.com/gonzalocastillo1483-art/sign-language-mnist-mlp/tree/389909513ca2c3d29162d832fbbe74b70308a271). La revisión final comprueba la ejecución en una copia aislada y conserva estos resultados publicados como referencia. Las figuras provienen de los análisis del equipo.
 
 | Evidencia | Archivo o ubicación | Qué permite comprobar |
 | --- | --- | --- |
@@ -539,7 +541,7 @@ La pauta exige explicación y evidencia. Una métrica alta no reemplaza la justi
 
 ## Anexo B Revisión antes de entregar
 
-Esta lista organiza el cierre del informe y del paquete completo. Las casillas pendientes requieren una comprobación del equipo y no deben marcarse solo porque exista el nombre del archivo.
+Esta lista resume los contenidos y comprobaciones de la entrega. El ensayo oral corresponde al equipo y se organiza en la sección 14.5.
 
 - [x] Describir el problema, los objetivos y los KPIs, distinguiendo alcance técnico y utilidad educativa.
 - [x] Documentar fuentes disponibles, calidad, distribución de clases y ejemplos visuales.
@@ -551,6 +553,8 @@ Esta lista organiza el cierre del informe y del paquete completo. Las casillas p
 - [x] Completar la referencia de procedencia y condiciones de uso del dataset.
 - [x] Incluir los dos CSV originales en el repositorio, conservando `data/raw/` y documentando sus huellas.
 - [x] Verificar que los enlaces a archivos locales y las seis figuras del informe existen dentro del repositorio.
+- [x] Ejecutar las 17 celdas del notebook de principio a fin en una copia aislada, sin errores.
+- [x] Unificar las cifras y las interpretaciones de notebook, informe y guía con la corrida de referencia de la presentación.
 
 ### Preguntas para la defensa
 

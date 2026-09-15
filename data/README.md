@@ -34,5 +34,5 @@ Las reglas de `.gitattributes` conservan los saltos de línea originales, inclus
 al clonar en Windows. No se requiere Git LFS ni una descarga externa de datos.
 
 La referencia de procedencia del dataset se completa en la sección 4 del
-[informe técnico](../INFORME_TECNICO_BASE.md). La aprobación docente del dataset
+[informe técnico](../INFORME_TECNICO.md). La aprobación docente del dataset
 ya está confirmada.
