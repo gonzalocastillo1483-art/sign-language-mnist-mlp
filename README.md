@@ -52,6 +52,10 @@ El notebook 01 se conserva como version inicial del equipo.
 
 ## Entregables
 
+- [Base del informe tecnico](INFORME_TECNICO_BASE.md), con desarrollo del caso,
+  evidencias, correspondencia con la rubrica y pendientes antes de entregar.
+- [Presentacion base en PowerPoint](presentation/archivos/Sign_Language_MNIST_base_final.pptx)
+  y [notas para organizar la exposicion](presentation/base_presentacion_equipo.md).
 - `README.md` con problema, objetivos, KPIs, metodologia, resultados y
   conclusiones.
 - Notebook ejecutable en `notebooks/02_sign_language_mnist_mlp_jenaro.ipynb`.
