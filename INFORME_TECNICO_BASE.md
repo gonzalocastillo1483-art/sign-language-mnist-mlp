@@ -26,13 +26,11 @@ existencia del código de cada integrante, que ya está integrado en el reposito
 | --- | --- | --- |
 | **Gonzalo Castillo** | 1 a 4, 5.1, 6 y 7 | Problema, variante propia acordada, objetivos, KPIs, referencia del dataset, calidad, CRISP-DM y justificación de la preparación |
 | **Jenaro Marín** | **8 y 9** | **Aporte desarrollado:** MLP, entrenamiento, comparación y elección del modelo |
-| **Jason** | 5.2 y 5.3, 10 a 13 | Interpretación de distribución e imágenes, métricas de test, matriz, aciertos, errores, limitaciones, impacto ético y conclusiones |
+| **Jason** | 5.2 y 5.3, 10 a 13 | **Aporte desarrollado:** interpretación de distribución e imágenes, métricas de test, matriz, aciertos, errores, limitaciones, impacto ético y conclusiones |
 | **Todo el equipo** | Identificación, resumen, 14 y 15, anexos | **Contenido desarrollado:** identificación, síntesis, reproducción, fuentes y guía de defensa. Quedan la revisión de la ejecución final y el ensayo conjunto |
 
 **Gonzalo:** aporte desarrollado en las secciones asignadas. Incluye la definición del problema, la variante del equipo, los KPIs, la procedencia del dataset, las comprobaciones de calidad, CRISP-DM y la preparación de datos.
-**Jason:** desarrollar la lectura de las métricas y de casos concretos, distinguir
-hipótesis de causas demostradas y cerrar las conclusiones del caso.
-Al terminar, retirar las notas de trabajo restantes y actualizar las casillas del anexo B.
+**Jason:** aporte desarrollado en las secciones asignadas. Incluye interpretación de distribución e imágenes, métricas de test, matriz de confusión, análisis de errores, limitaciones, impacto ético y conclusiones.
 
 ## Resumen
 
@@ -161,25 +159,23 @@ for split in ("train", "test"):
 
 ### 5.2 Distribución de las clases
 
-> **Jason — completar:** interpretar la distribución de entrenamiento y test, explicar sus diferencias y relacionarlas con el uso de F1 macro y soporte por clase.
+En los datos de entrenamiento, cada letra tiene una cantidad parecida de imágenes. La letra E tiene 957 imágenes y la R tiene 1.294. En el test las cantidades cambian más: R tiene 144 imágenes y E tiene 498.
 
-En el entrenamiento oficial, las cantidades por letra van desde 957 imágenes para E hasta 1.294 para R. Las clases tienen cantidades relativamente similares, aunque no idénticas. El test presenta diferencias mayores: R tiene 144 ejemplos y E tiene 498. Esto justifica acompañar accuracy con métricas macro y por clase.
+Por esta razón no basta con mirar un solo resultado general. También revisamos el resultado de cada letra. El F1 macro nos ayuda porque considera a todas las letras por igual, aunque una tenga menos imágenes que otra.
 
 ![Distribución de clases en el entrenamiento oficial](images/gonzalo_class_distribution.png)
 
-*Figura 1. Cantidad de imágenes por letra antes de separar la validación. Fuente: análisis de Gonzalo, con detalle en [el reporte de preprocesamiento](reports/gonzalo_preprocessing_summary.md).*
+*Figura 1. Cantidad de imágenes por letra antes de separar la validación. Fuente: análisis de Gonzalo, con detalle en [el reporte de preprocesamiento](reports/gonzalo_preprocessing_summary.md).* 
 
 ### 5.3 Exploración visual y variables relevantes
 
-> **Jason — completar:** comentar al menos dos ejemplos visuales y las dificultades que podrían presentar, sin afirmar causas de error solo por observar una imagen.
-
 ![Una imagen representativa por clase](images/gonzalo_sample_grid.png)
 
-*Figura 2. Ejemplos de las 24 clases. Cada imagen ilustra una clase y no resume por sí sola toda su variabilidad.*
+*Figura 2. Ejemplos de las 24 clases. Cada imagen muestra una letra, pero no representa todos los casos posibles.*
 
-Las variables predictoras son las intensidades de los píxeles. La posición de los dedos, el contorno de la mano, su orientación y el contraste con el fondo pueden influir en la clasificación. La resolución de 28 × 28 limita los detalles disponibles. Estas observaciones visuales orientan el análisis de errores, pero no constituyen un estudio formal de importancia de variables ni prueban causalidad.
+Las imágenes son de 28 × 28 píxeles y están en escala de grises. Para el modelo, cada píxel es un número. Al observar las imágenes se nota que la forma de los dedos, la posición de la mano y el contraste con el fondo pueden cambiar entre ejemplos. Algunas letras tienen formas parecidas, por lo que pueden ser más difíciles de separar.
 
-No se utiliza `label` como entrada del MLP. La etiqueta aporta la respuesta durante el entrenamiento y permite calcular métricas al evaluar.
+Esto solo es una observación de las imágenes. No podemos afirmar que una postura o un fondo sea la causa de un error sin hacer otra prueba. La columna de letra correcta se usa para entrenar y revisar el resultado, pero no entra como dato al modelo.
 
 ## 6 Metodología CRISP DM
 
@@ -308,9 +304,7 @@ ese resultado sin cambiar retrospectivamente el criterio que usamos para elegir 
 
 ## 10 Evaluación del desempeño en test
 
-> **Jason — completar:** explicar qué significa cada métrica para este caso y analizar la brecha de validación a test. Usar los valores del JSON actual y no mezclar corridas.
-
-Después de seleccionar C grande se evaluaron las 7.172 imágenes del test oficial.
+Después de elegir el modelo C grande usando la validación, lo probamos con las 7.172 imágenes del test oficial. Estas imágenes se dejaron aparte durante el entrenamiento y la elección del modelo.
 
 | Métrica | Resultado |
 | --- | ---: |
@@ -319,17 +313,56 @@ Después de seleccionar C grande se evaluaron las 7.172 imágenes del test ofici
 | Recall macro | 0,7859 |
 | F1 macro | 0,7760 |
 | Pérdida | 1,0483 |
-| Diferencia de accuracy entre validación y test | 20,29 puntos porcentuales |
+| Diferencia entre validación y test | 20,29 puntos porcentuales |
 
-Fuente: [resultados globales de test](reports/jenaro_integracion_test.json).
+La accuracy de 79,71% significa que el modelo acertó cerca de 8 de cada 10 imágenes del test. Precision y recall muestran, de forma general, si el modelo se equivoca al asignar una letra o si deja de reconocer letras que sí estaban presentes. El F1 macro junta ambas ideas y da la misma importancia a cada letra.
 
-Accuracy indica que cerca de ocho de cada diez imágenes del conjunto evaluado se clasifican correctamente. Para una aplicación educativa, las restantes predicciones podrían producir retroalimentación equivocada, por lo que sería insuficiente mostrar solo los aciertos. Precision y recall macro permiten analizar errores de asignación y omisiones de letras, mientras que F1 macro resume su equilibrio con el mismo peso para cada clase.
-
-El 100% de validación es un resultado medido, pero ofrece una estimación optimista al compararlo con este test. La brecha demuestra que el desempeño no se mantiene entre conjuntos. No prueba por sí sola memorización, diferencias entre personas, fondos distintos o fuga de datos. Esas explicaciones requerirían verificaciones adicionales.
+En validación el resultado fue 100%, pero en test bajó a 79,71%. Esto muestra que la validación fue más optimista que el test. No significa por sí solo que el modelo memorizó, ni permite decir exactamente cuál fue la causa. Para saberlo habría que hacer más pruebas.
 
 ## 11 Análisis de resultados y errores
 
-> **Jason — completar:** interpretar la matriz y las clases con dificultades, analizar ejemplos correctos e incorrectos e identificar posibles causas como hipótesis. Para afirmar qué pares se confunden más, respaldarlo con sus cantidades y no solo con ejemplos seleccionados.
+### 11.1 Matriz de confusión
+
+![Matriz de confusión del modelo seleccionado](images/jenaro_integracion_confusion_matrix.png)
+
+*Figura 4. Las filas muestran la letra real y las columnas la letra que predijo el modelo.*
+
+La diagonal principal muestra los aciertos. Las celdas que están fuera de esa diagonal muestran en qué letras se confundió el modelo. La matriz se debe leer junto con la cantidad de ejemplos de cada letra, porque una letra con más imágenes puede tener más errores en cantidad.
+
+### 11.2 Resultado por letra
+
+| Letra | Precision | Recall | F1 | Imágenes en test |
+| --- | ---: | ---: | ---: | ---: |
+| B | 0,99 | 0,95 | 0,97 | 432 |
+| A | 0,88 | 1,00 | 0,94 | 331 |
+| E | 0,89 | 1,00 | 0,94 | 498 |
+| P | 0,94 | 0,89 | 0,91 | 347 |
+| C | 0,87 | 0,93 | 0,90 | 310 |
+| U | 0,72 | 0,55 | 0,63 | 266 |
+| N | 0,71 | 0,54 | 0,61 | 291 |
+| T | 0,60 | 0,59 | 0,59 | 248 |
+| R | 0,49 | 0,72 | 0,58 | 144 |
+| S | 0,58 | 0,48 | 0,52 | 246 |
+
+La letra B tuvo un resultado alto. En cambio, S, R y T fueron las letras más difíciles de reconocer en esta selección. Por ejemplo, S tuvo F1 de 0,52. Esto confirma que el resultado general no cuenta toda la historia: algunas letras se reconocen mucho mejor que otras.
+
+### 11.3 Ejemplos correctos
+
+![Ejemplos de predicciones correctas](images/jenaro_integracion_correct_examples.png)
+
+*Figura 5. Ejemplos en que la letra real y la letra predicha coinciden.*
+
+Estos ejemplos muestran que el modelo aprendió patrones útiles para varias letras. De todos modos, que una imagen salga bien no quiere decir que esa letra siempre salga bien.
+
+### 11.4 Ejemplos con errores
+
+![Ejemplos de predicciones incorrectas](images/jenaro_integracion_incorrect_examples.png)
+
+*Figura 6. Ejemplos del test en que la letra real y la predicción no coinciden.*
+
+En los ejemplos aparecen casos como B predicha como U, N como A y F como C. Son ejemplos reales de la figura, pero no significan necesariamente que sean los errores más comunes. Las letras parecidas, la posición de la mano o el fondo podrían influir, pero por ahora son solo posibles explicaciones.
+
+
 
 ### 11.1 Matriz de confusión
 
@@ -378,37 +411,25 @@ La similitud entre posturas, la orientación de la mano y el contraste con el fo
 
 ## 12 Limitaciones e impacto ético
 
-> **Jason — completar:** relacionar las limitaciones del MLP con los errores observados y explicar el impacto de una respuesta incorrecta para un usuario. Coordinar con el equipo las consideraciones éticas.
-
 ### 12.1 Limitaciones técnicas
 
-El aplanamiento conserva los 784 valores, pero las capas densas no incorporan explícitamente filtros locales ni comparten pesos según la posición. Por ello, esta arquitectura no aprovecha la estructura espacial del mismo modo que una red convolucional. No corresponde decir que se borran los píxeles al aplanar.
+El modelo usa los 784 píxeles como una lista de números. Esto le permite usar la imagen, pero no aprovecha tan bien la cercanía entre píxeles como lo haría un modelo pensado especialmente para imágenes. Además, las fotos son pequeñas y muestran señas quietas.
 
-La validación se separa por imagen y clase. No se ha demostrado que separe personas o condiciones de captura independientes. La ausencia de filas idénticas tampoco elimina posibles semejanzas entre ejemplos. Además, el experimento utiliza una corrida por arquitectura y no cuantifica la variabilidad entre semillas.
+Este trabajo no demuestra que el modelo funcione igual con videos, otras personas, distintos fondos o cambios de luz. Tampoco prueba que funcione con letras que requieren movimiento, como J y Z. Solo se hizo una corrida por cada tamaño de red, por lo que faltaría repetir pruebas para saber si los resultados se mantienen.
 
-La resolución es baja y las imágenes son estáticas. Los resultados no permiten asegurar desempeño en video, señas en movimiento, personas nuevas o fotografías con otras condiciones de iluminación. El modelo tampoco representa toda la lengua de señas ni evalúa comprensión lingüística.
+### 12.2 Uso responsable
 
-### 12.2 Impacto ético y uso responsable
+Si un sistema educativo muestra una letra equivocada, podría confundir a quien está aprendiendo. Por eso no se debe presentar este modelo como una respuesta perfecta. Una versión futura debería mostrar sus límites y permitir comparar la respuesta con material confiable.
 
-Una predicción errónea podría enseñar una asociación incorrecta entre una imagen y una letra. Un prototipo educativo debería mostrar sus límites y permitir contrastar la respuesta con material validado, sin presentar cada predicción como una corrección incuestionable.
-
-Las métricas globales no demuestran equidad entre personas, tonos de piel, edades o condiciones de captura. El análisis realizado no cuenta con una evaluación por esos grupos, por lo que no permite afirmar que todos recibirían el mismo desempeño.
-
-Si una futura versión incorpora imágenes de usuarios, será necesario acordar su uso, minimizar la información almacenada y protegerla. También se deberán revisar las condiciones de uso de los datos y consultar a personas conocedoras de ASL para evitar presentar este ejercicio como una solución integral de accesibilidad.
+Tampoco evaluamos si el modelo funciona igual para todas las personas o condiciones de captura. Si en el futuro se usan fotos de usuarios, habría que pedir permiso, guardar la menor cantidad posible de datos y proteger esa información. Este proyecto es una práctica de clasificación, no una solución completa de accesibilidad.
 
 ## 13 Conclusiones y mejoras futuras
 
-> **Jason — completar:** redactar el cierre con una opinión fundamentada sobre la utilidad del modelo, sus límites y el siguiente experimento. Recoger las decisiones de Gonzalo y Jenaro y mantener las mejoras futuras separadas de lo que ya se implementó.
+El proyecto permitió seguir todo el proceso: preparar datos, entrenar tres modelos, comparar sus resultados y revisar sus errores. El modelo C grande fue el mejor en validación, por eso se eligió antes de mirar el test.
 
-El proyecto implementa un flujo completo de clasificación con MLP, desde la preparación de los CSV hasta la evaluación y el análisis visual. La comparación bajo un protocolo común favorece a C grande en validación. El resultado de test, 79,71% de accuracy y 0,7760 de F1 macro, muestra capacidad de clasificación y también limitaciones de generalización.
+En el test obtuvo 79,71% de accuracy y 0,7760 de F1 macro. Es un resultado que muestra que el modelo puede reconocer muchas letras, pero no todas con la misma calidad. La diferencia entre validación y test también muestra que un 100% en validación no basta para decir que el modelo funcionará igual en otros datos.
 
-La decisión de utilizar normalización, etiquetas one-hot, ReLU, softmax y categorical crossentropy es coherente con el formato de los datos y la clasificación multiclase. La comparación de capacidades permite relacionar la arquitectura con el aprendizaje, aunque no identifica una configuración óptima universal.
-
-El modelo es útil como experiencia de aprendizaje y como referencia inicial. No hay evidencia suficiente para declararlo listo para una aplicación real. El desempeño desigual entre letras y los errores observados deben considerarse al explicar qué significa que el modelo sea bueno o insuficiente para el caso.
-
-Como próximos experimentos, se propone variar épocas o learning rate manteniendo las demás condiciones, repetir las corridas con semillas registradas y examinar confusiones concretas. Si se siguen tomando decisiones a partir de los errores del test actual, este deja de ser una evaluación completamente nueva; deberá reservarse otra evaluación independiente para la decisión final.
-
-En experiencias posteriores podrían estudiarse CNN o aumentación de datos para comparar su comportamiento. Son mejoras propuestas, no técnicas implementadas en los resultados de este informe.
+Como siguiente paso, podríamos cambiar una cosa a la vez, por ejemplo el número de épocas o el learning rate, y comparar el resultado. También sería útil repetir las pruebas con distintas semillas. Más adelante se podrían estudiar modelos para imágenes, como una CNN, o nuevas formas de aumentar los datos. Estas son ideas futuras y no forman parte de los resultados actuales.
 
 ## 14 Reproducción y organización de la entrega
 
