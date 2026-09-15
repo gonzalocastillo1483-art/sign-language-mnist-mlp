@@ -29,11 +29,10 @@ existencia del código de cada integrante, que ya está integrado en el reposito
 | **Jason** | 5.2 y 5.3, 10 a 13 | Interpretación de distribución e imágenes, métricas de test, matriz, aciertos, errores, limitaciones, impacto ético y conclusiones |
 | **Todo el equipo** | Identificación, resumen, 14 y 15, anexos | **Contenido desarrollado:** identificación, síntesis, reproducción, fuentes y guía de defensa. Quedan la revisión de la ejecución final y el ensayo conjunto |
 
-**Gonzalo:** completar la variante y la procedencia del dataset, explicar las
-decisiones de preparación y verificar los resultados de calidad dentro del notebook.
+**Gonzalo:** aporte desarrollado en las secciones asignadas. Incluye la definición del problema, la variante del equipo, los KPIs, la procedencia del dataset, las comprobaciones de calidad, CRISP-DM y la preparación de datos.
 **Jason:** desarrollar la lectura de las métricas y de casos concretos, distinguir
 hipótesis de causas demostradas y cerrar las conclusiones del caso.
-Al terminar, retirar las notas de trabajo y actualizar las casillas del anexo B.
+Al terminar, retirar las notas de trabajo restantes y actualizar las casillas del anexo B.
 
 ## Resumen
 
@@ -47,7 +46,7 @@ La principal conclusión es que un resultado alto en validación no basta para a
 
 ## 1 Descripción del problema de negocio
 
-> **Gonzalo — completar:** concretar el usuario beneficiado, justificar el dataset y cerrar la variante propia en 1.2 con el equipo.
+El usuario beneficiado se entiende como una persona que practica el alfabeto de ASL o como un docente que necesita revisar ejercicios básicos de reconocimiento visual. El modelo se plantea como una referencia técnica inicial para observar si una red densa puede distinguir letras estáticas a partir de imágenes ya preparadas.
 
 Una aplicación para practicar el alfabeto de ASL podría utilizar un clasificador que asigne una letra a la imagen de una mano. Esto permitiría ofrecer retroalimentación durante ejercicios de reconocimiento. En esta primera etapa estudiamos si una red MLP puede resolver esa clasificación y qué errores habría que considerar antes de utilizarla con estudiantes.
 
@@ -65,11 +64,13 @@ La clasificación de letras visualmente parecidas también facilita analizar aci
 
 El experimento implementado utiliza las 24 clases disponibles, una partición estratificada con semilla 42 y la comparación de tres capacidades de MLP, manteniendo 20 épocas, batch de 128 y Adam con learning rate 0,001.
 
-**[COMPLETAR VARIANTE PROPIA]** Registrar la variante específica acordada por el grupo y explicar qué la diferencia del problema general. La pauta menciona como posibilidades una selección de clases, un límite de ejemplos por clase, una semilla propia o una comparación entre subconjuntos. Usar las 24 clases describe el alcance, pero por sí solo no demuestra una diferenciación. La comparación de arquitecturas está realizada y debe describirse como tal, sin afirmar una variante de datos que no se haya implementado. Si la variante modifica los datos o la partición, deberán actualizarse el notebook, las métricas y las conclusiones correspondientes.
+La variante propia del grupo consiste en mantener el problema multiclase con las 24 letras estáticas disponibles y comparar tres capacidades de MLP bajo un protocolo común. La diferencia respecto del problema general no está en crear un traductor completo ni en cambiar el dataset, sino en estudiar cómo varía el aprendizaje al aumentar la cantidad de capas y neuronas de una red Fully Connected sobre los mismos datos preparados.
+
+Para que la comparación sea coherente, las tres arquitecturas usan la misma partición estratificada, la misma semilla 42, 20 épocas, batch de 128, Adam con learning rate 0,001 y las mismas métricas de evaluación. De esta forma, el efecto observado se relaciona principalmente con la capacidad del MLP y no con cambios simultáneos en los datos o en el protocolo de entrenamiento.
 
 ## 2 Objetivos del proyecto
 
-> **Gonzalo — completar:** revisar que los objetivos correspondan al alcance y a la variante acordada, sin atribuir una aplicación real que no se construyó.
+Los objetivos se limitan al flujo técnico implementado: preparar datos, entrenar y comparar modelos MLP, evaluar resultados y documentar decisiones. No se plantea desplegar una aplicación real ni demostrar impacto educativo con usuarios, porque eso queda fuera del alcance de esta evaluación.
 
 ### 2.1 Objetivo general
 
@@ -85,7 +86,7 @@ Implementar y evaluar un modelo MLP para clasificar las 24 letras estáticas de 
 
 ## 3 Definición de KPIs
 
-> **Gonzalo — completar:** relacionar cada indicador con la utilidad del caso y justificar por qué se usan métricas macro. Coordinar con Jason la interpretación de sus valores finales.
+Los KPIs se eligieron para describir el desempeño técnico del clasificador y para evitar depender de una sola cifra global. En un problema con 24 letras, accuracy permite resumir aciertos generales, pero puede ocultar diferencias entre clases. Por eso se incorporan métricas macro y por clase, que ayudan a revisar si algunas letras funcionan peor aunque el promedio total parezca aceptable.
 
 Los siguientes indicadores técnicos permiten valorar la utilidad potencial del clasificador. No demuestran por sí solos una mejora del aprendizaje o de la accesibilidad de los usuarios.
 
@@ -104,7 +105,7 @@ El criterio experimental prioriza el mayor F1 macro de validación. No se fijó 
 
 ## 4 Fuentes y comprensión de los datos
 
-> **Gonzalo — completar:** añadir la referencia de procedencia solicitada al final de esta sección y explicar el formato y las clases del dataset.
+El dataset se trabaja en formato tabular. Cada fila representa una imagen y cada columna de píxel representa una intensidad de gris. Esto permite utilizar directamente los 784 valores como entrada de un MLP, sin requerir lectura de archivos de imagen separados.
 
 La fuente utilizada es el archivo **Sign Language MNIST.zip**, del cual se extraen `sign_mnist_train.csv` y `sign_mnist_test.csv`. Ambos CSV originales están incluidos en `data/raw/` dentro del repositorio, con sus huellas en [la documentación del dataset](data/README.md). Cada fila contiene `label` y las columnas `pixel1` a `pixel784`. El archivo de test oficial se conserva separado durante el ajuste del modelo.
 
@@ -122,13 +123,13 @@ La fuente utilizada es el archivo **Sign Language MNIST.zip**, del cual se extra
 
 Las etiquetas originales son 0–8 y 10–24. No están incluidas J ni Z, que requieren movimiento. No deben interpretarse los huecos en la numeración como clases observadas ni añadirse salidas sin ejemplos.
 
-**[COMPLETAR REFERENCIA DEL DATASET]** Añadir autor o entidad, enlace de la fuente original consultada, versión o fecha de descarga y condiciones de uso aplicables al archivo utilizado. El nombre del ZIP identifica el insumo local, pero no sustituye su referencia bibliográfica.
+La procedencia del dataset corresponde a **Sign Language MNIST**, publicado en Kaggle por el usuario **tecperson/DataMunge**. La ficha del dataset lo describe como un reemplazo tipo MNIST para reconocimiento de gestos de mano y señala licencia **CC0: Public Domain**. En esta entrega se utiliza el archivo local `Sign Language MNIST.zip`, del cual se extrajeron los CSV conservados en `data/raw/`. Fuente consultada el 15/09/2026: https://www.kaggle.com/datasets/datamunge/sign-language-mnist.
 
 ## 5 Análisis exploratorio y calidad de los datos
 
 ### 5.1 Comprobaciones de estructura
 
-> **Gonzalo — completar:** incorporar o comprobar estas verificaciones en el notebook y explicar qué problemas descartan y cuáles no.
+Estas verificaciones permiten revisar que los archivos base tengan la estructura esperada antes de entrenar. Se comprueba tamaño, columnas, clases, nulos, duplicados exactos y rango de intensidades. Con esto se descartan problemas básicos de carga o formato, aunque no se puede asegurar que todas las etiquetas sean perfectas ni que las imágenes cubran todas las condiciones reales de uso.
 
 La revisión de los CSV utilizados arroja los siguientes resultados. Los duplicados se cuentan como filas completas idénticas dentro de cada archivo.
 
@@ -182,7 +183,7 @@ No se utiliza `label` como entrada del MLP. La etiqueta aporta la respuesta dura
 
 ## 6 Metodología CRISP DM
 
-> **Gonzalo — completar:** revisar cómo se aplicó cada etapa y relacionarla con el código y las evidencias. El equipo debe mantener explícito que no hubo despliegue en producción.
+CRISP-DM se utiliza como guía para ordenar el proyecto desde la definición del caso hasta la evaluación. En esta entrega la etapa de despliegue no corresponde a producción, sino a dejar el repositorio, el informe y la presentación en condiciones de ser revisados y reproducidos.
 
 | Etapa | Aplicación al proyecto | Evidencia |
 | --- | --- | --- |
@@ -197,7 +198,7 @@ No se realizó un despliegue en producción. La sexta etapa se aborda como plani
 
 ## 7 Preparación y transformación de los datos
 
-> **Gonzalo — completar:** explicar con sus palabras la normalización, el mapeo, la codificación y la partición estratificada, comprobando que cantidades y semilla coincidan con el notebook.
+La preparación transforma los CSV originales en entradas numéricas compatibles con una red MLP. El objetivo es que los píxeles, etiquetas y particiones tengan un formato estable para entrenar, comparar y evaluar sin mezclar las funciones de cada conjunto de datos.
 
 1. **Carga y separación de variables.** Se leen ambos CSV y se separa `label` de los 784 píxeles. Esto evita incorporar la respuesta como variable predictora.
 2. **Conversión y normalización.** Se convierten los píxeles a `float32` y se dividen por 255. El rango queda entre 0 y 1. La división usa un valor fijo de la escala y no estima parámetros a partir del test.
@@ -535,7 +536,7 @@ Las referencias se organizan según su función: la pauta define lo que se eval�
 - **Pauta oficial:** `EP1_TLY1102_Instrucciones y Pauta PRESENTACIÓN_Estudiante.pdf`. Requisitos formales en páginas impresas 6 y 7, desarrollo y evaluación en 7 y 8, rúbrica en 10 y 11. Incluye un informe Markdown, notebook ejecutable, datos, organización del proyecto y defensa técnica.
 - **Fundamentos de clases:** `1.1.1 El Perceptrón (2).pptx`, `1.1.2_Notebook_Construir_un_Perceptron_Estudiante_JR (2).ipynb`, `1.2.1_PPT_Redes_Fully_Connected (2).pdf`, `JR_1.2.4_Notebook_Entrenando_una_Red_FF_Estudiante (1).ipynb` y `1.3.1 Descenso del Gradiente.pptx`.
 - **Diseño y evaluación de clases:** `1.3.4_Notebook_Loss_Gradiente_Estudiante.ipynb`, `1.4.1_PPT_Diseno_y_Evaluacion_Modelos (1).pptx`, `1.4.3_Diseño_Evaluacion_Modelos_Fully_Connected_Estudiante.ipynb` y `1.4.4_Notebook_Modelo_Keras_Metricas_Estudiante.ipynb`.
-- **Dataset utilizado:** `Sign Language MNIST.zip`, del que provienen los dos CSV incluidos. La referencia de procedencia y las condiciones de uso se completan en la sección 4, a cargo de Gonzalo.
+- **Dataset utilizado:** `Sign Language MNIST.zip`, del que provienen los dos CSV incluidos. La procedencia, enlace y condiciones de uso se detallan en la sección 4.
 
 | Contenido de clases | Aplicación al proyecto |
 | --- | --- |
@@ -591,8 +592,8 @@ Esta lista organiza el cierre del informe y del paquete completo. Las casillas p
 - [x] Desarrollar la síntesis, las instrucciones de reproducción, las referencias disponibles y la guía de defensa común.
 - [x] Registrar la fecha de entrega del 15/09/2026.
 - [ ] Completar la identificación de Jason si se requiere su nombre completo.
-- [ ] Cerrar la variante propia del grupo y verificar que la descripción coincida con el experimento.
-- [ ] Completar la referencia de procedencia y condiciones de uso del dataset.
+- [x] Cerrar la variante propia del grupo y verificar que la descripción coincida con el experimento.
+- [x] Completar la referencia de procedencia y condiciones de uso del dataset.
 - [ ] Revisar las explicaciones antiguas del notebook: aparece una cifra de 79,17% que debe distinguirse de los resultados actuales de 79,71%. Revisar también afirmaciones de memorización o de que el 100% de validación no es real, porque esas causas no están demostradas.
 - [ ] Comprobar que el modelo binario de la entrega corresponda al registro de métricas y a la huella de `reports/jenaro_entrenamiento.json`. El modelo local conservado de una ejecución previa no debe mezclarse con reportes posteriores.
 - [ ] Integrar las comprobaciones de calidad en el notebook si aún no aparecen, para que cada resultado del informe sea reproducible allí.
@@ -618,7 +619,7 @@ Esta lista organiza el cierre del informe y del paquete completo. Las casillas p
 ### Respuestas de apoyo para las preguntas cruzadas
 
 1. **Problema y alcance.** Clasificamos imágenes estáticas en una de 24 letras de ASL como ejercicio y referencia para un posible apoyo educativo. No evaluamos traducción de conversaciones, reconocimiento en video ni una aplicación con usuarios.
-2. **Variante.** El experimento actual usa las 24 clases, semilla 42 y tres capacidades de MLP. Gonzalo debe cerrar con el equipo la variante propia solicitada por la pauta y reflejarla en la sección 1.2 y en el notebook. No debemos atribuir una selección de clases que no se realizó.
+2. **Variante.** El experimento usa las 24 clases estáticas disponibles y compara tres capacidades de MLP con la misma partición, semilla 42 y protocolo de entrenamiento. La variante está en la comparación controlada de arquitecturas Fully Connected, no en una selección distinta de clases ni en un cambio del dataset.
 3. **Preparación.** Dividir por 255 lleva las intensidades a 0–1. El remapeo resuelve los huecos de las etiquetas originales y permite representar 24 clases consecutivas. One-hot expresa la clase correcta en el formato requerido por la pérdida elegida.
 4. **Particiones.** Entrenamiento ajusta los pesos, validación permite comparar configuraciones y test evalúa el modelo elegido. Utilizar el test para decidir repetidamente convertiría sus resultados en parte del proceso de ajuste.
 5. **Componentes.** Los pesos y el sesgo forman una combinación de entradas, ReLU añade no linealidad y softmax produce la distribución entre clases. La pérdida compara esa distribución con la etiqueta y los gradientes orientan la actualización de los parámetros.
