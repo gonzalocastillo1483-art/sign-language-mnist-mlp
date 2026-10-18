@@ -21,6 +21,15 @@ preguntas cruzadas.
 - Redactar las secciones 1 a 3 del informe.
 - Presentar las diapositivas 1, 2 y 3.
 
+### Entregables de Gonzalo en GitHub
+
+- Revisar la carga, normalizacion y conversion a tensores en
+  `src/sign_mlp/data.py` y en el inicio del notebook CNN.
+- Completar las secciones 1, 2 y 3 de `INFORME_TECNICO_EP2.md`.
+- Mantener actualizados `README.md` y la explicacion de continuidad de la EP1.
+- Preparar el contenido de las diapositivas 1, 2 y 3.
+- Hacer un commit sugerido: `documenta continuidad y adaptacion de datos para la CNN`.
+
 ## Jenaro Marin: arquitectura, entrenamiento e interpretabilidad
 
 - Explicar y justificar las capas convolucionales, pooling y densas.
@@ -32,6 +41,17 @@ preguntas cruzadas.
 - Redactar las secciones 4 y 5 del informe.
 - Presentar las diapositivas 4, 5 y 6.
 
+### Entregables de Jenaro en GitHub
+
+- Implementar y revisar la arquitectura en `src/sign_mlp/cnn.py`.
+- Mantener el entrenamiento reproducible en `scripts/train_cnn_ep2.py` y en
+  `notebooks/03_sign_language_mnist_cnn_ep2.ipynb`.
+- Generar el resumen del modelo, historial, curvas, Feature Maps y Grad-CAM.
+- Completar las secciones 4 y 5 de `INFORME_TECNICO_EP2.md`.
+- Preparar el contenido de las diapositivas 4, 5 y 6.
+- Hacer commits sugeridos: `implementa y entrena la arquitectura CNN` y
+  `agrega visualizaciones de interpretabilidad de la CNN`.
+
 ## Jason Aguilera: evaluacion, comparacion y conclusiones
 
 - Reportar accuracy, precision, recall y F1 macro de test.
@@ -41,6 +61,41 @@ preguntas cruzadas.
 - Explicar limitaciones y proponer mejoras.
 - Redactar las secciones 6 a 9 del informe.
 - Presentar las diapositivas 7, 8, 9 y 10.
+
+### Entregables de Jason en GitHub
+
+- Revisar la evaluacion en `src/sign_mlp/evaluate.py`.
+- Generar accuracy, precision, recall, F1 macro, matriz de confusion y ejemplos
+  correctos e incorrectos en `reports/` e `images/`.
+- Generar `reports/mlp_cnn_comparison.csv` e
+  `images/mlp_cnn_comparison.png`.
+- Completar las secciones 6, 7, 8 y 9 de `INFORME_TECNICO_EP2.md`.
+- Preparar el contenido de las diapositivas 7, 8, 9 y 10.
+- Hacer commits sugeridos: `evalua la CNN y analiza sus errores` y
+  `compara los resultados de la CNN con el MLP`.
+
+## Orden para trabajar y subir cambios
+
+Para evitar conflictos, cada integrante debe comenzar con:
+
+```powershell
+git switch ep2-cnn
+git pull origin ep2-cnn
+```
+
+Luego modifica solo su bloque, hace su commit y lo sube:
+
+```powershell
+git add <archivos-de-su-parte>
+git commit -m "mensaje descriptivo en espanol"
+git push origin ep2-cnn
+```
+
+El siguiente integrante debe hacer `git pull origin ep2-cnn` antes de empezar.
+No deben editar simultaneamente el notebook, el informe o la PPT, porque son
+archivos compartidos y pueden producir conflictos. El orden recomendado es
+Gonzalo, Jenaro y Jason. Al final, Gonzalo integra `README.md`, el informe y la
+PPT en un ultimo commit: `integra los entregables finales de la EP2`.
 
 ## Responsabilidades compartidas
 
