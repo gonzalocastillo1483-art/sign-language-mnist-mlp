@@ -11,13 +11,13 @@ mantenemos exactamente el mismo problema, dataset y particiones, pero
 reemplazamos el MLP por una CNN. Asi podemos comparar de manera directa cuanto
 aporta una arquitectura disenada para imagenes."
 
-## Diapositiva 2 - Dataset y variante (Gonzalo)
+## Diapositiva 2 - Continuidad y cambio de entrada (Gonzalo)
 
-"El dataset tiene 27.455 imagenes en el archivo de entrenamiento y 7.172 en el
-test oficial. Cada imagen es de 28 por 28 pixeles, en escala de grises. Hay 24
-clases, desde A hasta I y desde K hasta Y. J y Z no estan incluidas porque esas
-senas necesitan movimiento. El grafico muestra que las clases tienen cantidades
-parecidas, aunque no exactamente iguales."
+"No volvimos a hacer la limpieza de la EP1. Reutilizamos el mismo dataset ya
+validado, las mismas 24 clases, las mismas particiones y la semilla 42. Esto es
+importante porque permite atribuir las diferencias de rendimiento al cambio de
+arquitectura. El MLP recibia cada imagen como un vector plano de 784 valores;
+la CNN recibe la misma informacion conservando su forma espacial."
 
 ## Diapositiva 3 - Preparacion para la CNN (Gonzalo)
 
@@ -25,8 +25,9 @@ parecidas, aunque no exactamente iguales."
 ese vector plano. Para la CNN reconstruimos la imagen como un tensor de 28 por
 28 por 1: alto, ancho y un canal de gris. Tambien dividimos cada pixel por 255.
 Como la intensidad original va de 0 a 255, el resultado queda entre 0 y 1, lo
-que estabiliza el entrenamiento. Conservamos 21.964 imagenes para entrenar,
-5.491 para validar y las 7.172 oficiales para test."
+que estabiliza el entrenamiento. Esa reconstruccion tensorial es la adaptacion
+principal de los datos para la EP2; no es una nueva limpieza. Conservamos
+21.964 imagenes para entrenar, 5.491 para validar y 7.172 para test."
 
 Transicion: "Ahora Jenaro explicara como la CNN procesa esos tensores."
 

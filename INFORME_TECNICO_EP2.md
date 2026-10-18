@@ -30,6 +30,11 @@ Los archivos `sign_mnist_train.csv` y `sign_mnist_test.csv` contienen una
 columna `label` y 784 columnas de intensidad. Cada fila representa una imagen
 de 28 x 28 pixeles en escala de grises.
 
+Esta etapa no repite la limpieza ni el EDA completo realizado en la EP1. Se
+reutiliza el conjunto ya validado y se documentan solamente las verificaciones
+y transformaciones necesarias para cambiar desde la entrada plana del MLP al
+formato tensorial requerido por la CNN.
+
 El conjunto incluye 24 clases: A-I y K-Y. J y Z se excluyen porque sus senas
 requieren movimiento, mientras que el dataset contiene imagenes estaticas.
 
@@ -173,7 +178,7 @@ El flujo completo esta en `notebooks/03_sign_language_mnist_cnn_ep2.ipynb` y
 tambien puede ejecutarse con `python scripts/train_cnn_ep2.py`. Las dependencias
 estan registradas en `requirements-ep2.txt`.
 
-- **Gonzalo Castillo:** continuidad, variante, datos y preparacion de tensores.
+- **Gonzalo Castillo:** continuidad, variante y adaptacion de vector MLP a tensor CNN.
 - **Jenaro Marin:** arquitectura, entrenamiento e interpretabilidad.
 - **Jason Aguilera:** evaluacion, comparacion, errores, limitaciones y cierre.
 

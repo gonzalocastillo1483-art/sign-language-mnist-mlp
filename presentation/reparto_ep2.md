@@ -4,14 +4,20 @@ El reparto se organiza por bloques de la pauta y mantiene una carga similar
 para los tres integrantes. Todos deben conocer el flujo completo para las
 preguntas cruzadas.
 
-## Gonzalo Castillo: continuidad, datos y preparacion
+## Gonzalo Castillo: continuidad y adaptacion MLP-CNN
 
-- Explicar el problema resuelto en la EP1 y por que se mantiene el dataset.
-- Definir la variante: clasificacion multiclase de 24 letras ASL.
-- Describir tamano, formato, clases y calidad del dataset.
-- Explicar el split de entrenamiento, validacion y test.
+- Explicar brevemente el problema de la EP1 y por que se reutiliza el dataset.
+- Justificar la continuidad de la variante multiclase de 24 letras ASL y la
+  semilla 42, tal como exige el criterio de variante propia.
+- Aclarar que no se repite la limpieza ni el EDA completo de la EP1: se
+  reutilizan los datos ya validados y solo se verifican las condiciones
+  necesarias para ejecutar la CNN.
+- Explicar que se conservan las mismas particiones para que la comparacion con
+  el MLP sea objetiva.
 - Justificar la normalizacion de 0-255 a 0-1.
 - Explicar por que la CNN recibe tensores `(28, 28, 1)` y no vectores de 784.
+- Comparar conceptualmente el MLP, que recibe una entrada plana, con la CNN,
+  que aprovecha vecindad espacial, filtros compartidos y pooling.
 - Redactar las secciones 1 a 3 del informe.
 - Presentar las diapositivas 1, 2 y 3.
 

@@ -79,7 +79,7 @@ posiciones visuales parecidas.
 
 | Responsable | Parte principal |
 | --- | --- |
-| Gonzalo Castillo | Continuidad con EP1, variante, dataset, calidad de datos y preparacion de tensores. |
+| Gonzalo Castillo | Continuidad con EP1, justificacion de la variante y adaptacion de vector MLP a tensor CNN. |
 | Jenaro Marin | Diseno de la CNN, entrenamiento, curvas, mapas de caracteristicas y Grad-CAM. |
 | Jason Aguilera | Metricas, comparacion MLP-CNN, matriz de confusion, errores, limitaciones y conclusiones. |
 
