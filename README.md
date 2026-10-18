@@ -77,11 +77,49 @@ posiciones visuales parecidas.
 
 ## Division del trabajo EP2
 
-| Responsable | Parte principal |
-| --- | --- |
-| Gonzalo Castillo | Continuidad con EP1, justificacion de la variante y adaptacion de vector MLP a tensor CNN. |
-| Jenaro Marin | Diseno de la CNN, entrenamiento, curvas, mapas de caracteristicas y Grad-CAM. |
-| Jason Aguilera | Metricas, comparacion MLP-CNN, matriz de confusion, errores, limitaciones y conclusiones. |
+El trabajo se divide por bloques completos para mantener una carga equilibrada.
+Cada integrante es responsable de una parte tecnica, su evidencia, la redaccion
+correspondiente y su explicacion durante la presentacion.
+
+### Gonzalo Castillo: continuidad y preparacion para la CNN
+
+- Verificar la reutilizacion del dataset, las clases, los splits y la semilla 42.
+- Revisar la normalizacion de pixeles y la conversion de vectores de 784 valores
+  a tensores `(28, 28, 1)`.
+- Mantener documentado el flujo de datos y la reproducibilidad del proyecto.
+- Redactar las secciones 1, 2 y 3 del informe tecnico.
+- Mantener actualizado este README.
+- Preparar y presentar las diapositivas 1, 2 y 3.
+
+### Jenaro Marin: arquitectura, entrenamiento e interpretabilidad
+
+- Implementar y justificar las capas convolucionales, pooling, dropout y densas.
+- Configurar y explicar Adam, la funcion de perdida y los callbacks.
+- Ejecutar el entrenamiento y revisar las curvas de accuracy y perdida.
+- Generar e interpretar Feature Maps y Grad-CAM.
+- Redactar las secciones 4 y 5 del informe tecnico.
+- Preparar y presentar las diapositivas 4, 5 y 6.
+
+### Jason Aguilera: evaluacion, comparacion y conclusiones
+
+- Calcular e interpretar accuracy, precision, recall y F1 macro.
+- Analizar la matriz de confusion y ejemplos correctos e incorrectos.
+- Comparar objetivamente la CNN con el MLP de la EP1.
+- Explicar limitaciones, mejoras posibles y conclusiones.
+- Redactar las secciones 6, 7, 8 y 9 del informe tecnico.
+- Preparar y presentar las diapositivas 7, 8, 9 y 10.
+
+### Responsabilidades compartidas
+
+- Ejecutar el notebook completo antes de entregar.
+- Verificar que README, informe, notebook y PPT utilicen los mismos resultados.
+- Ensayar la exposicion completa con cronometro hasta llegar a 10 minutos.
+- Conocer el flujo completo, porque el docente puede hacer preguntas cruzadas.
+- Hacer al menos una pregunta durante la presentacion de otro grupo.
+
+Para evitar conflictos, antes de comenzar cada integrante debe ejecutar
+`git pull origin ep2-cnn` y subir su bloque con commits descriptivos en espanol.
+El notebook, el informe y la PPT no deben editarse simultaneamente.
 
 La asignacion detallada y las tareas compartidas estan en
 [`presentation/reparto_ep2.md`](presentation/reparto_ep2.md).
