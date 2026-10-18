@@ -79,3 +79,109 @@ def plot_prediction_examples(X, y_true, y_pred, index_to_label, correct=True, ma
     fig.suptitle(title)
     fig.tight_layout()
     return fig
+
+
+def feature_map_model(model, layer_names=("conv_1", "conv_2", "conv_3")):
+    """Create a model that exposes intermediate convolutional activations."""
+    try:
+        from tensorflow import keras
+    except ImportError as exc:
+        raise ImportError(
+            "TensorFlow is required. Install requirements-ep2.txt or use Colab."
+        ) from exc
+
+    outputs = [model.get_layer(name).output for name in layer_names]
+    return keras.Model(inputs=model.inputs, outputs=outputs, name="feature_maps")
+
+
+def plot_feature_maps(model, image, layer_names=("conv_1", "conv_2", "conv_3"), maps_per_layer=8):
+    """Plot representative feature maps from selected convolutional layers."""
+    image = np.asarray(image, dtype=np.float32)
+    if image.ndim == 3:
+        image = image[np.newaxis, ...]
+
+    activations = feature_map_model(model, layer_names).predict(image, verbose=0)
+    fig, axes = plt.subplots(
+        len(layer_names),
+        maps_per_layer,
+        figsize=(2 * maps_per_layer, 2.2 * len(layer_names)),
+    )
+    axes = np.atleast_2d(axes)
+
+    for row, (layer_name, activation) in enumerate(zip(layer_names, activations)):
+        available = min(maps_per_layer, activation.shape[-1])
+        for col in range(maps_per_layer):
+            ax = axes[row, col]
+            ax.axis("off")
+            if col < available:
+                ax.imshow(activation[0, :, :, col], cmap="viridis")
+            if col == 0:
+                ax.set_title(layer_name)
+
+    fig.suptitle("Mapas de caracteristicas por profundidad")
+    fig.tight_layout()
+    return fig
+
+
+def gradcam_heatmap(model, image, class_index=None, conv_layer_name="conv_3"):
+    """Compute a Grad-CAM heatmap for one image and one predicted or chosen class."""
+    try:
+        import tensorflow as tf
+        from tensorflow import keras
+    except ImportError as exc:
+        raise ImportError(
+            "TensorFlow is required. Install requirements-ep2.txt or use Colab."
+        ) from exc
+
+    image = np.asarray(image, dtype=np.float32)
+    if image.ndim == 3:
+        image = image[np.newaxis, ...]
+
+    conv_layer = model.get_layer(conv_layer_name)
+    grad_model = keras.Model(
+        model.inputs,
+        [conv_layer.output, model.output],
+        name="gradcam",
+    )
+
+    with tf.GradientTape() as tape:
+        conv_output, predictions = grad_model(image, training=False)
+        if class_index is None:
+            class_index = tf.argmax(predictions[0])
+        class_score = predictions[:, class_index]
+
+    gradients = tape.gradient(class_score, conv_output)
+    pooled_gradients = tf.reduce_mean(gradients, axis=(0, 1, 2))
+    weighted = conv_output[0] * pooled_gradients
+    heatmap = tf.reduce_sum(weighted, axis=-1)
+    heatmap = tf.maximum(heatmap, 0)
+    maximum = tf.reduce_max(heatmap)
+    heatmap = tf.where(maximum > 0, heatmap / maximum, heatmap)
+    return heatmap.numpy(), int(class_index)
+
+
+def plot_gradcam_examples(model, X, y_true, y_pred, index_to_label, max_items=6):
+    """Plot test images beside Grad-CAM maps for their predicted classes."""
+    count = min(max_items, len(X))
+    fig, axes = plt.subplots(count, 2, figsize=(6, 2.6 * count))
+    axes = np.atleast_2d(axes)
+
+    for row in range(count):
+        heatmap, predicted_index = gradcam_heatmap(
+            model,
+            X[row],
+            class_index=int(y_pred[row]),
+        )
+        real = label_to_letter(index_to_label[int(y_true[row])])
+        predicted = label_to_letter(index_to_label[predicted_index])
+
+        axes[row, 0].imshow(X[row].squeeze(), cmap="gray")
+        axes[row, 0].set_title(f"Real: {real} | Pred: {predicted}")
+        axes[row, 0].axis("off")
+
+        axes[row, 1].imshow(heatmap, cmap="inferno")
+        axes[row, 1].set_title("Activacion Grad-CAM")
+        axes[row, 1].axis("off")
+
+    fig.tight_layout()
+    return fig

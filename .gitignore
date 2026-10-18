@@ -40,3 +40,16 @@ reports/*
 !images/jenaro_integracion_confusion_matrix.png
 !images/jenaro_integracion_correct_examples.png
 !images/jenaro_integracion_incorrect_examples.png
+
+# Evidencia reproducible de la Evaluacion Parcial 2 (CNN).
+!reports/cnn_history.csv
+!reports/cnn_classification_report.txt
+!reports/cnn_model_summary.txt
+!reports/cnn_metrics.json
+!reports/mlp_cnn_comparison.csv
+!images/cnn_training_curves.png
+!images/cnn_confusion_matrix.png
+!images/cnn_correct_examples.png
+!images/cnn_incorrect_examples.png
+!images/cnn_feature_maps.png
+!images/cnn_gradcam_examples.png

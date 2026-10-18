@@ -63,6 +63,23 @@ def as_images(X):
     return X.reshape(-1, IMAGE_SIZE, IMAGE_SIZE)
 
 
+def as_cnn_images(X):
+    """Return normalized grayscale images with shape (n, 28, 28, 1)."""
+    X = np.asarray(X, dtype=np.float32)
+
+    if X.ndim == 2 and X.shape[1] == INPUT_DIM:
+        return X.reshape(-1, IMAGE_SIZE, IMAGE_SIZE, 1)
+    if X.ndim == 3 and X.shape[1:] == (IMAGE_SIZE, IMAGE_SIZE):
+        return X[..., np.newaxis]
+    if X.ndim == 4 and X.shape[1:] == (IMAGE_SIZE, IMAGE_SIZE, 1):
+        return X
+
+    raise ValueError(
+        "Expected flattened 784-pixel rows or grayscale 28x28 images; "
+        f"received shape {X.shape}."
+    )
+
+
 def stratified_train_validation_split(X, y, validation_size=0.2, random_state=42):
     """Split arrays while keeping a similar class distribution in both sets."""
     if not 0 < validation_size < 1:
@@ -129,3 +146,26 @@ def prepare_sign_mnist_data(raw_dir: str | Path, validation_size=0.2, random_sta
         "index_to_label": index_to_label,
         "metadata": metadata,
     }
+
+
+def prepare_sign_mnist_cnn_data(
+    raw_dir: str | Path,
+    validation_size=0.2,
+    random_state=42,
+):
+    """Prepare the EP2 split while preserving image height, width, and channel."""
+    prepared = prepare_sign_mnist_data(
+        raw_dir,
+        validation_size=validation_size,
+        random_state=random_state,
+    )
+
+    for key in ("X_train_full", "X_train", "X_val", "X_test"):
+        prepared[key] = as_cnn_images(prepared[key])
+
+    prepared["metadata"] = {
+        **prepared["metadata"],
+        "input_shape": (IMAGE_SIZE, IMAGE_SIZE, 1),
+        "format": "tensor_grayscale",
+    }
+    return prepared
