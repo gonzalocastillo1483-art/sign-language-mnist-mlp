@@ -51,13 +51,32 @@ preguntas cruzadas.
 - Practicar preguntas cruzadas: cualquier integrante puede recibir preguntas
   sobre arquitectura, perdida, metricas, errores o comparacion.
 
-## Tiempos sugeridos
+## Cronograma obligatorio de 10 minutos
 
-| Bloque | Responsable | Tiempo |
-| --- | --- | ---: |
-| Diapositivas 1-3 | Gonzalo | 2 min 40 s |
-| Diapositivas 4-6 | Jenaro | 3 min 10 s |
-| Diapositivas 7-10 | Jason | 3 min 30 s |
-| Margen para cambios | Equipo | 40 s |
+El docente utilizara cronometro. Los cambios de expositor forman parte del
+tiempo y no se deja un margen separado.
 
-Total estimado: 10 minutos.
+| Tiempo acumulado | Diapositiva | Responsable | Duracion |
+| --- | --- | --- | ---: |
+| 00:00-00:35 | 1. Caso y continuidad | Gonzalo | 35 s |
+| 00:35-01:30 | 2. Continuidad MLP-CNN | Gonzalo | 55 s |
+| 01:30-02:30 | 3. Adaptacion tensorial | Gonzalo | 60 s |
+| 02:30-02:40 | Cambio a Jenaro | Gonzalo/Jenaro | 10 s |
+| 02:40-03:45 | 4. Arquitectura CNN | Jenaro | 65 s |
+| 03:45-04:50 | 5. Entrenamiento | Jenaro | 65 s |
+| 04:50-05:50 | 6. Feature Maps y Grad-CAM | Jenaro | 60 s |
+| 05:50-06:00 | Cambio a Jason | Jenaro/Jason | 10 s |
+| 06:00-07:00 | 7. Metricas de test | Jason | 60 s |
+| 07:00-08:15 | 8. Comparacion MLP-CNN | Jason | 75 s |
+| 08:15-09:10 | 9. Analisis de errores | Jason | 55 s |
+| 09:10-10:00 | 10. Conclusiones | Jason | 50 s |
+
+**Total obligatorio: 10:00 exactos.**
+
+Puntos de control durante el ensayo:
+
+- Gonzalo debe entregar la palabra a los **02:30**.
+- Jenaro debe terminar su contenido a los **05:50**.
+- Jason debe comenzar a los **06:00** y cerrar a los **10:00**.
+- Si alguien se atrasa, debe acortar ejemplos secundarios; no se eliminan la
+  comparacion MLP-CNN, Feature Maps, metricas ni conclusiones.
