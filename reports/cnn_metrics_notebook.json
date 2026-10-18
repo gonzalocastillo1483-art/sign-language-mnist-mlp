@@ -1,0 +1,13 @@
+{
+  "model": "CNN_EP2",
+  "seed": 42,
+  "parameters": 243352,
+  "fit_seconds": 45.49219640000001,
+  "validation_loss": 2.845687049557455e-05,
+  "validation_accuracy": 1.0,
+  "test_loss": 0.14441752433776855,
+  "test_accuracy": 0.9659788012504578,
+  "test_precision_macro": 0.9604288990475841,
+  "test_recall_macro": 0.9615949341203094,
+  "test_f1_macro": 0.9595194651136808
+}

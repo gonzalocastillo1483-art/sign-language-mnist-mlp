@@ -140,7 +140,7 @@ def gradcam_heatmap(model, image, class_index=None, conv_layer_name="conv_3"):
     conv_layer = model.get_layer(conv_layer_name)
     grad_model = keras.Model(
         model.inputs,
-        [conv_layer.output, model.output],
+        [conv_layer.output, model.outputs[0]],
         name="gradcam",
     )
 

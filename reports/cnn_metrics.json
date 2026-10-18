@@ -1,0 +1,73 @@
+{
+  "model": "CNN_EP2",
+  "seed": 42,
+  "input_shape": [
+    28,
+    28,
+    1
+  ],
+  "num_classes": 24,
+  "train_images": 21964,
+  "validation_images": 5491,
+  "test_images": 7172,
+  "epochs_requested": 20,
+  "epochs_completed": 20,
+  "batch_size": 128,
+  "learning_rate_initial": 0.001,
+  "optimizer": "Adam",
+  "loss": "sparse_categorical_crossentropy",
+  "parameters": 243352,
+  "fit_seconds": 41.40975430000003,
+  "validation_loss": 2.845687049557455e-05,
+  "validation_accuracy": 1.0,
+  "test_loss": 0.14441752433776855,
+  "test_accuracy": 0.9659788012504578,
+  "test_accuracy_check": 0.965978806469604,
+  "test_precision_macro": 0.9604288990475841,
+  "test_recall_macro": 0.9615949341203094,
+  "test_f1_macro": 0.9595194651136808,
+  "best_classes_by_f1": [
+    {
+      "class": "W",
+      "f1": 1.0
+    },
+    {
+      "class": "P",
+      "f1": 1.0
+    },
+    {
+      "class": "O",
+      "f1": 1.0
+    },
+    {
+      "class": "F",
+      "f1": 1.0
+    },
+    {
+      "class": "D",
+      "f1": 1.0
+    }
+  ],
+  "worst_classes_by_f1": [
+    {
+      "class": "T",
+      "f1": 0.7744874715261959
+    },
+    {
+      "class": "X",
+      "f1": 0.8586387434554974
+    },
+    {
+      "class": "R",
+      "f1": 0.8723404255319149
+    },
+    {
+      "class": "Q",
+      "f1": 0.9085872576177285
+    },
+    {
+      "class": "L",
+      "f1": 0.9186813186813186
+    }
+  ]
+}

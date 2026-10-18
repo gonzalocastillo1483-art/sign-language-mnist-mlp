@@ -1,316 +1,154 @@
-# Clasificacion de lenguaje de senas con MLP
+# Clasificacion de lenguaje de senas: MLP y CNN
 
-Proyecto para la Evaluacion Parcial 1 de TLY1102. El objetivo es construir,
-entrenar y defender un modelo de red neuronal tipo MLP para clasificar imagenes
-del dataset Sign Language MNIST.
+Proyecto del equipo formado por **Gonzalo Castillo, Jenaro Marin y Jason
+Aguilera** para las evaluaciones EP1 y EP2 de TLY1102.
 
-## Decision del equipo
+- **EP1:** modelo base MLP para clasificacion multiclase.
+- **EP2:** red neuronal convolucional (CNN) sobre el mismo problema y dataset.
 
-Dataset elegido: `Sign Language MNIST.zip`.
+La rama `main` conserva la entrega MLP. La rama `ep2-cnn` desarrolla la CNN y
+la comparacion objetiva entre ambos modelos.
 
-La variante trabajada corresponde a un problema de clasificacion multiclase:
-clasificar las letras disponibles del alfabeto ASL usando imagenes de 28x28
-pixeles en escala de grises. El dataset contiene 24 clases: A-I y K-Y. No
-incluye J ni Z porque esas senas requieren movimiento y el dataset contiene
-imagenes estaticas.
+## Problema y dataset
 
-## Problema de negocio
+El objetivo es clasificar imagenes de manos que representan letras del
+alfabeto ASL. Se utiliza **Sign Language MNIST**:
 
-Una aplicacion educativa o de accesibilidad necesita reconocer senas de letras
-del alfabeto a partir de imagenes. El modelo propuesto busca clasificar cada
-imagen en la letra correspondiente, como primera version de un sistema de apoyo
-para aprendizaje de lenguaje de senas.
+- 27.455 imagenes de entrenamiento y 7.172 de test oficial.
+- Imagenes de 28 x 28 pixeles en escala de grises.
+- 24 clases: A-I y K-Y.
+- J y Z no aparecen porque esas senas requieren movimiento.
+- Cada CSV contiene una columna `label` y 784 columnas de pixeles.
 
-## Objetivos
+Se mantiene el mismo split estratificado de la EP1: 21.964 ejemplos para
+entrenamiento, 5.491 para validacion y 7.172 para test oficial.
 
-- Implementar un flujo completo de ciencia de datos para clasificacion de
-  imagenes.
-- Entrenar una red neuronal MLP como modelo base.
-- Evaluar el desempeno con metricas de clasificacion.
-- Analizar errores y limitaciones del modelo.
-- Documentar el proceso de forma reproducible.
+## Continuidad entre EP1 y EP2
 
-## KPIs
+La variante es la misma clasificacion multiclase. Lo que cambia es la forma en
+que el modelo recibe y procesa las imagenes:
 
-- Accuracy de validacion y test.
-- F1-score macro para medir desempeno balanceado entre clases.
-- Precision y recall por clase.
-- Diferencia entre accuracy de validacion y test para observar generalizacion.
-- Letras con mayor confusion en la matriz de confusion.
-
-## Estado actual
-
-| Responsable | Aporte principal | Estado |
+| Modelo | Entrada | Idea principal |
 | --- | --- | --- |
-| Gonzalo Castillo | Carga, normalizacion y particion de datos | Completo |
-| Jenaro | Diseno, entrenamiento y comparacion de modelos MLP | Completo |
-| Jason | Evaluacion final, matriz de confusion, ejemplos y conclusiones | Completo |
+| MLP (EP1) | Vector de 784 valores | Trata cada pixel como una caracteristica independiente. |
+| CNN (EP2) | Tensor de 28 x 28 x 1 | Conserva la posicion espacial y aprende patrones locales. |
 
-El flujo completo ya esta implementado en
-[`notebooks/02_sign_language_mnist_mlp_jenaro.ipynb`](notebooks/02_sign_language_mnist_mlp_jenaro.ipynb).
-El notebook 01 se conserva como version inicial del equipo.
+Para la CNN, los pixeles se convierten de enteros entre 0 y 255 a valores
+decimales entre 0 y 1, y cada fila vuelve a su forma de imagen `(28, 28, 1)`.
+No se aplica data augmentation porque no fue necesaria para obtener una mejora
+clara; queda como alternativa para estudiar mayor robustez.
 
-## Entregables
+## Arquitectura CNN
 
-Repositorio: https://github.com/gonzalocastillo1483-art/sign-language-mnist-mlp
+La red implementada usa:
 
-Para la entrega se adjuntan el ZIP del proyecto, el notebook principal, la
-presentación y el informe Markdown. El ZIP conserva las carpetas necesarias
-para ejecutar y consultar las figuras. La copia separada del notebook sirve
-para revisar sus salidas; para reentrenar debe abrirse dentro del proyecto.
-Al ejecutar se regeneran reportes, figuras y modelo: usar una copia del proyecto
-si se desea conservar los resultados de referencia.
+1. `Conv2D(32, 3x3)` y `MaxPooling2D(2x2)`.
+2. `Conv2D(64, 3x3)` y `MaxPooling2D(2x2)`.
+3. `Dropout(0.25)`.
+4. `Conv2D(128, 3x3)` y `MaxPooling2D(2x2)`.
+5. `Flatten`, `Dense(128, ReLU)` y `Dropout(0.40)`.
+6. `Dense(24, softmax)` para obtener una probabilidad por clase.
 
+El modelo se entrena con Adam (`learning_rate=0.001`),
+`sparse_categorical_crossentropy`, batch de 128 y hasta 20 epocas. Incluye
+`EarlyStopping` y `ReduceLROnPlateau` para controlar el entrenamiento.
 
-- [Informe tecnico](INFORME_TECNICO.md), con el desarrollo del caso,
-  evidencias, correspondencia con la rubrica y aportes completos del equipo.
-- [Presentacion en PowerPoint](presentation/archivos/Sign_Language_MNIST_base_final.pptx)
-  y [notas para organizar la exposicion](presentation/base_presentacion_equipo.md).
-- `README.md` con problema, objetivos, KPIs, metodologia, resultados y
-  conclusiones.
-- Notebook ejecutable en `notebooks/02_sign_language_mnist_mlp_jenaro.ipynb`.
-- Carpeta de proyecto ordenada.
-- Graficos y evidencias en `images/` y `reports/`.
-- Modelo entrenado generado localmente en `models/jenaro_mlp.keras`.
-- Presentacion y defensa tecnica de 10 minutos.
+## Resultados de referencia
 
-## Aporte de Gonzalo Castillo: carga y preprocesamiento
+Ejecucion local con semilla 42:
 
-La primera parte implementada corresponde a la preparacion de los datos:
+| Metrica | MLP EP1 | CNN EP2 |
+| --- | ---: | ---: |
+| Parametros | 569.240 | 243.352 |
+| Tiempo de entrenamiento | 31,50 s | 41,41 s |
+| Accuracy validacion | 100,00% | 100,00% |
+| Accuracy test | 79,71% | **96,60%** |
+| F1 macro test | 0,7760 | **0,9595** |
 
-- Lectura de los CSV originales del dataset Sign Language MNIST.
-- Separacion de variables de entrada (`pixel1` a `pixel784`) y etiqueta
-  (`label`).
-- Normalizacion de pixeles desde 0-255 hacia 0-1.
-- Transformacion de cada imagen de 28x28 pixeles a un vector de 784 valores
-  para el MLP.
-- Creacion de una particion de validacion estratificada desde el set de
-  entrenamiento.
-- Mantencion del set de test oficial para la evaluacion final.
+La CNN aumenta el accuracy de test en **16,89 puntos porcentuales**, mejora el
+F1 macro en **0,1835** y utiliza aproximadamente **57,25% menos parametros**.
+En esta ejecucion tarda cerca de 9,91 segundos mas. La diferencia entre
+validacion y test baja de 20,29 puntos en el MLP a 3,40 puntos en la CNN, lo que
+indica una generalizacion mucho mejor.
 
-Particiones usadas:
+Las clases con menor F1 en la CNN fueron T, X, R, Q y L. Las confusiones mas
+frecuentes fueron T con X, G con Q y X con T, senas que comparten formas o
+posiciones visuales parecidas.
 
-| Conjunto | Filas |
-| --- | ---: |
-| Entrenamiento | 21.964 |
-| Validacion | 5.491 |
-| Test oficial | 7.172 |
+## Division del trabajo EP2
 
-Para regenerar la evidencia:
+| Responsable | Parte principal |
+| --- | --- |
+| Gonzalo Castillo | Continuidad con EP1, variante, dataset, calidad de datos y preparacion de tensores. |
+| Jenaro Marin | Diseno de la CNN, entrenamiento, curvas, mapas de caracteristicas y Grad-CAM. |
+| Jason Aguilera | Metricas, comparacion MLP-CNN, matriz de confusion, errores, limitaciones y conclusiones. |
 
-```powershell
-python scripts\gonzalo_preprocessing_report.py
-```
+La asignacion detallada y las tareas compartidas estan en
+[`presentation/reparto_ep2.md`](presentation/reparto_ep2.md).
 
-Archivos generados por esta parte:
+## Entregables EP2
 
-- `reports/gonzalo_preprocessing_summary.md`
-- `images/gonzalo_class_distribution.png`
-- `images/gonzalo_sample_grid.png`
+- [Notebook ejecutable CNN](notebooks/03_sign_language_mnist_cnn_ep2.ipynb).
+- [Informe tecnico EP2](INFORME_TECNICO_EP2.md).
+- [Presentacion EP2](presentation/archivos/Sign_Language_MNIST_CNN_EP2.pptx).
+- [Guion de presentacion y defensa](presentation/guion_ep2.md).
+- [Metricas en JSON](reports/cnn_metrics.json).
+- [Reporte por clase](reports/cnn_classification_report.txt).
+- [Curvas de entrenamiento](images/cnn_training_curves.png).
+- [Matriz de confusion](images/cnn_confusion_matrix.png).
+- [Mapas de caracteristicas](images/cnn_feature_maps.png).
+- [Ejemplos Grad-CAM](images/cnn_gradcam_examples.png).
+- [Predicciones correctas](images/cnn_correct_examples.png) e
+  [incorrectas](images/cnn_incorrect_examples.png).
 
-## Aporte de Jenaro: modelo y entrenamiento
-
-La version 02 mantiene la preparacion de Gonzalo y desarrolla el modelo MLP
-con los contenidos de las actividades 1.4.3 y 1.4.4:
-
-- Tres arquitecturas comparadas: `(32,)`, `(128, 64)` y `(512, 256, 128)`.
-- Capas Dense con ReLU y 24 salidas softmax.
-- One-hot encoding y `categorical_crossentropy`, como en el ejemplo MNIST.
-- Optimizador Adam, learning rate 0.001, batch 128, 20 epocas y semilla 42.
-- Comparacion de capacidad sin Dropout, con la misma particion de datos.
-- Seleccion por F1 macro de validacion; en empate exacto, menor perdida de
-  validacion y menor numero de parametros.
-
-Resultados de validacion de la ejecucion local de referencia:
-
-| Modelo | Capas ocultas | Parametros | Accuracy val | F1 macro val |
-| --- | --- | ---: | ---: | ---: |
-| A_pequena | 32 | 25.912 | 65.60% | 0.6556 |
-| B_mediana | 128, 64 | 110.296 | 97.80% | 0.9790 |
-| C_grande | 512, 256, 128 | 569.240 | 100.00% | 1.0000 |
-
-Se selecciono el modelo `C_grande` porque obtuvo el mejor F1 macro de
-validacion. Esta seleccion se hizo antes de mirar el test oficial.
-
-Evidencia y explicacion:
-
-- [Informe del modelo y entrenamiento](reports/jenaro_modelo_entrenamiento.md).
-- [Comparacion de validacion en CSV](reports/jenaro_comparacion_validacion.csv).
-- [Curvas de los tres modelos](images/jenaro_curvas_comparacion.png).
-- [Configuracion, mapeo, versiones y huellas](reports/jenaro_entrenamiento.json).
-- [Apoyo para la defensa de Jenaro](presentation/jenaro_defensa.md).
-
-## Aporte de Jason: evaluacion y analisis de errores
-
-Despues de seleccionar el modelo por validacion, se evaluo el modelo `C_grande`
-en el set de test oficial.
-
-Resultados de test:
-
-| Metrica | Valor |
-| --- | ---: |
-| Accuracy test | 79.71% |
-| Precision macro test | 0.7783 |
-| Recall macro test | 0.7859 |
-| F1 macro test | 0.7760 |
-| Imagenes evaluadas | 7.172 |
-
-La diferencia entre el 100.00% de validacion y el 79.71% de test muestra que
-la validacion interna fue optimista. El modelo aprende patrones utiles, pero
-no mantiene el mismo rendimiento sobre el test oficial.
-
-Letras con mejor desempeno:
-
-- B: F1-score 0.97.
-- A y E: F1-score 0.94.
-- P: F1-score 0.91.
-- C: F1-score 0.90.
-
-Letras con peor desempeno:
-
-- S: F1-score 0.52.
-- R: F1-score 0.58.
-- T: F1-score 0.59.
-- N: F1-score 0.61.
-- U: F1-score 0.63.
-
-Los errores se concentran en letras visualmente parecidas. En los ejemplos
-mal clasificados aparecen confusiones como B con U, D con X, N con A, S con I,
-T con X, N con S, U con D, U con Y y F con C.
-
-Limitacion principal del MLP: al usar una entrada plana de 784 valores, el
-modelo conserva los pixeles, pero no aprovecha explicitamente la relacion
-espacial entre pixeles vecinos como lo haria una CNN. Por eso puede ser mas
-sensible a cambios de posicion, fondo o pequenas diferencias entre manos.
-
-Evidencia:
-
-- [Metricas de test](reports/jenaro_integracion_test.json).
-- [Reporte de clasificacion por clase](reports/jenaro_integracion_classification_report.txt).
-- [Matriz de confusion](images/jenaro_integracion_confusion_matrix.png).
-- [Ejemplos correctos](images/jenaro_integracion_correct_examples.png).
-- [Ejemplos incorrectos](images/jenaro_integracion_incorrect_examples.png).
-
-## Division de trabajo
-
-### Gonzalo
-
-- Preparar la carga del dataset.
-- Separar datos de entrenamiento, validacion y prueba.
-- Normalizar pixeles.
-- Convertir las imagenes al formato que necesita el MLP.
-- Documentar la descripcion del dataset, objetivos, KPIs, CRISP-DM y
-  preprocesamiento.
-
-### Jenaro
-
-- Implementar la arquitectura MLP.
-- Definir capas ocultas, neuronas, activaciones, funcion de salida, perdida y
-  optimizador.
-- Entrenar una version base y comparar arquitecturas.
-- Documentar decisiones tecnicas del modelo y entrenamiento.
-
-### Jason
-
-- Interpretar distribucion de clases y ejemplos visuales.
-- Calcular metricas: accuracy, precision, recall y F1-score.
-- Construir e interpretar la matriz de confusion.
-- Seleccionar ejemplos bien y mal clasificados.
-- Redactar analisis de errores, limitaciones del MLP y conclusiones.
-
-### Todos
-
-- Revisar que el notebook se ejecute completo.
-- Ensayar preguntas cruzadas para la defensa.
-- Asegurarse de que cada integrante pueda explicar el flujo completo.
-
-## Estructura del repositorio
-
-```text
-sign-language-mnist-mlp/
-  data/
-    raw/              # CSV originales extraidos del ZIP
-    processed/        # Datos preparados si se guardan
-  images/             # Graficos, matriz de confusion y ejemplos
-  models/             # Modelo entrenado localmente
-  notebooks/          # Notebook principal
-  presentation/       # Guion o apoyo para exponer
-  reports/            # Resultados y tablas exportadas
-  scripts/            # Scripts auxiliares
-  src/sign_mlp/       # Codigo reutilizable del proyecto
-```
+El modelo entrenado se genera localmente como `models/cnn_sign_language.keras`
+y no se versiona porque puede reconstruirse ejecutando el notebook.
 
 ## Instalacion y ejecucion
-
-Entorno de verificación: Python 3.13.6 en Windows, con las dependencias fijadas.
-El notebook utiliza `src/` y los CSV del proyecto; descomprimir primero el ZIP completo.
-
-Para ejecutar localmente:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements-jenaro.txt
+python -m pip install -r requirements-ep2.txt
 ```
 
-Los CSV ya vienen incluidos en `data/raw/` al clonar o descargar el repositorio
-completo. No es necesario extraer un ZIP ni modificar rutas personales.
-Ver [archivos e integridad del dataset](data/README.md).
+Luego se puede abrir y ejecutar de principio a fin:
 
-Despues abrir y ejecutar el notebook principal:
+```text
+notebooks/03_sign_language_mnist_cnn_ep2.ipynb
+```
+
+O ejecutar el flujo desde consola:
 
 ```powershell
-jupyter notebook notebooks\02_sign_language_mnist_mlp_jenaro.ipynb
+python scripts\train_cnn_ep2.py
 ```
 
-Para ejecutar y guardar las salidas desde terminal:
+Los CSV originales ya estan incluidos en `data/raw/`. La ejecucion vuelve a
+generar las metricas, figuras y el modelo.
 
-```powershell
-jupyter nbconvert --to notebook --execute notebooks\02_sign_language_mnist_mlp_jenaro.ipynb --output 02_sign_language_mnist_mlp_ejecutado.ipynb --ExecutePreprocessor.timeout=1800
+## Estructura
+
+```text
+data/raw/              CSV de Sign Language MNIST
+images/                Graficos y evidencia visual
+models/                Modelos generados localmente
+notebooks/             Flujo MLP de EP1 y flujo CNN de EP2
+presentation/          PPT, guion y reparto
+reports/               Metricas, tablas y reportes
+scripts/               Entrenamiento y generacion del notebook
+src/sign_mlp/           Codigo reutilizable para datos, modelos y evaluacion
 ```
 
-El repositorio incluye los dos CSV originales. El modelo binario se genera al
-ejecutar el notebook y permanece fuera de Git. Se necesitan las dependencias
-de Python indicadas arriba, pero no una descarga adicional del dataset.
+## Limitaciones y trabajo futuro
 
-## Metodologia CRISP-DM
+- El test oficial puede tener diferencias de distribucion respecto del split
+  interno de validacion.
+- Algunas senas estaticas son visualmente muy similares.
+- No se reconocen J ni Z ni secuencias en movimiento.
+- Como trabajo futuro se puede probar data augmentation, Batch Normalization,
+  ajuste de hiperparametros y validacion con imagenes capturadas fuera del
+  dataset.
 
-1. Comprension del negocio: reconocer letras de lenguaje de senas como apoyo
-   educativo o de accesibilidad.
-2. Comprension de los datos: analizar cantidad de clases, ejemplos por clase y
-   formato de imagen.
-3. Preparacion de datos: normalizar pixeles, separar entrenamiento, validacion
-   y prueba, y adaptar las imagenes a vectores.
-4. Modelamiento: implementar y comparar MLP con capas densas.
-5. Evaluacion: revisar metricas, curvas de entrenamiento, matriz de confusion y
-   ejemplos correctos e incorrectos.
-6. Documentacion: dejar repositorio reproducible y explicar limitaciones.
-
-## Preguntas que deben saber responder
-
-- Por que se eligio este dataset.
-- Que problema de clasificacion resuelve el modelo.
-- Por que el problema es multiclase y no binario.
-- Que es un MLP y como procesa una imagen.
-- Por que las imagenes se transforman de 28x28 a un vector de 784 valores.
-- Que significan accuracy, precision, recall, F1-score y matriz de confusion.
-- Por que se usa softmax con 24 salidas.
-- Por que se usa one-hot encoding con `categorical_crossentropy`.
-- Que diferencia hay entre train, validacion y test.
-- Que significa que el modelo tenga 100% en validacion pero 79.71% en test.
-- Por que un MLP no es la mejor arquitectura para imagenes.
-- Que mejoras se podrian implementar despues, por ejemplo CNN, data augmentation
-  o ajuste de hiperparametros.
-
-## Checklist de rubrica
-
-- [x] Problema definido y dataset justificado.
-- [x] Variante propia del trabajo documentada.
-- [x] Carga y preprocesamiento explicado.
-- [x] MLP implementado y justificado.
-- [x] Entrenamiento y validacion registrados.
-- [x] Accuracy, precision, recall, F1-score y matriz de confusion calculados.
-- [x] Ejemplos correctos e incorrectos analizados.
-- [x] Limitaciones del MLP explicadas.
-- [x] README actualizado con resultados actuales.
-- [ ] Presentacion ensayada por los tres integrantes.
+El informe original de la EP1 permanece en
+[`INFORME_TECNICO.md`](INFORME_TECNICO.md).

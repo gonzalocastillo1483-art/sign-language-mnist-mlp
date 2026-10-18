@@ -46,6 +46,7 @@ reports/*
 !reports/cnn_classification_report.txt
 !reports/cnn_model_summary.txt
 !reports/cnn_metrics.json
+!reports/cnn_metrics_notebook.json
 !reports/mlp_cnn_comparison.csv
 !images/cnn_training_curves.png
 !images/cnn_confusion_matrix.png
@@ -53,3 +54,9 @@ reports/*
 !images/cnn_incorrect_examples.png
 !images/cnn_feature_maps.png
 !images/cnn_gradcam_examples.png
+!images/mlp_cnn_comparison.png
+
+# Artefactos temporales de construccion y validacion de la presentacion
+.codex-pptx-build/
+.codex-finalizer/
+.chart-data-*/

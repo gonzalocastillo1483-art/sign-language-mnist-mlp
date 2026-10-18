@@ -57,6 +57,28 @@ def model_summary_text(model):
     return "\n".join(lines)
 
 
+def plot_model_comparison(comparison):
+    """Compare test accuracy and macro F1 on the same percentage scale."""
+    labels = comparison["model"].tolist()
+    accuracy = (comparison["test_accuracy"] * 100).tolist()
+    f1_macro = (comparison["test_f1_macro"] * 100).tolist()
+    x = np.arange(len(labels))
+    width = 0.34
+
+    fig, ax = plt.subplots(figsize=(9, 5))
+    bars_accuracy = ax.bar(x - width / 2, accuracy, width, label="Accuracy test")
+    bars_f1 = ax.bar(x + width / 2, f1_macro, width, label="F1 macro test")
+    ax.set_ylabel("Porcentaje")
+    ax.set_ylim(0, 105)
+    ax.set_xticks(x, labels)
+    ax.set_title("Comparacion experimental MLP y CNN")
+    ax.legend()
+    ax.bar_label(bars_accuracy, fmt="%.2f%%", padding=3)
+    ax.bar_label(bars_f1, fmt="%.2f%%", padding=3)
+    fig.tight_layout()
+    return fig
+
+
 def main():
     set_global_seed(SEED)
 
@@ -207,6 +229,10 @@ def main():
         ]
     )
     comparison.to_csv(reports_dir / "mlp_cnn_comparison.csv", index=False)
+    save_figure(
+        plot_model_comparison(comparison),
+        images_dir / "mlp_cnn_comparison.png",
+    )
 
     save_figure(plot_history(history), images_dir / "cnn_training_curves.png")
     save_figure(
