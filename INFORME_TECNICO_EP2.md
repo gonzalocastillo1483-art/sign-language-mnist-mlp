@@ -109,26 +109,11 @@ de versiones o hardware pueden modificar numeros y tiempos.
 
 ## 5. Entrenamiento e interpretabilidad
 
-El modelo CNN tiene 243.352 parametros entrenables. En la ejecucion de
-referencia completo 20 epocas en 41,41 segundos y alcanzo 100% de accuracy de
-validacion. El resumen posterior al entrenamiento tambien incluye estados
-del optimizador Adam; esos estados no son parametros aprendidos adicionales
-de la arquitectura. El notebook previo registra otra ejecucion de 45,49 s;
-esa duracion no sustituye los 41,41 s de la referencia usada en la comparacion.
+La ejecución utilizada para el cierre es la de Jason, guardada en `output/jason_ep2/`. La CNN conserva los 243.352 parámetros y completó 20 épocas en 137,20 segundos, con 100 % de accuracy de validación. Los estados del optimizador Adam no representan parámetros adicionales de la arquitectura. Las corridas anteriores de 41,41 s y 127,95 s se conservan como antecedentes en sus ubicaciones originales.
 
-En el historial de referencia, la perdida de entrenamiento baja de 2,3968 a
-0,0157 y la accuracy de 26,83% a 99,43%. La validacion alcanza 100% desde la
-epoca 7. El learning rate pasa de 0,001 a 0,0005 y luego a 0,00025;
-al cerrar la epoca 20 el callback lo reduce otra vez a 0,000125, sin utilizar
-esa ultima tasa en una nueva epoca. EarlyStopping no detiene antes del limite
-de 20 epocas. La menor `val_loss`
-se alcanza en la epoca 19 (indice 18 del CSV), cuyos pesos se restauran.
+La pérdida de entrenamiento disminuyó de 2,3849 a 0,0170 y el accuracy aumentó de 27,04 % a 99,45 %. La menor pérdida de validación se obtuvo en la época 19, con valor 0,0000242964; el entrenamiento completó las 20 épocas y restauró los pesos de la época 19. No hubo parada anticipada. El historial conserva las tasas de aprendizaje utilizadas en cada época.
 
-La validacion supera al entrenamiento en buena parte de las curvas. Esto es
-compatible con Dropout activo en train e inactivo en validacion, y con que la
-metrica de entrenamiento acumula lotes mientras los pesos cambian. Las curvas
-no bastan para descartar sobreajuste ni demostrar generalizacion fuera del
-dataset; Jason analiza el test independiente.
+Dropout actúa durante entrenamiento y se desactiva en validación e inferencia. Esto y la acumulación de métricas mientras cambian los pesos ayudan a interpretar diferencias entre las curvas. Las curvas no bastan para demostrar robustez externa; la sección 6 evalúa el test oficial.
 
 Los Feature Maps muestran los primeros ocho canales de `conv_1`, `conv_2` y
 `conv_3`, junto a la imagen original. Sus resoluciones son 28x28, 14x14 y 7x7
@@ -146,98 +131,135 @@ aciertos. Cada mapa se normaliza por separado: sus colores no permiten
 comparar confianza entre imagenes y no prueban causalidad. Las activaciones
 pueden incluir partes de la mano y tambien bordes o fondo.
 
-Evidencia:
+Evidencia de la ejecución utilizada:
 
-- `images/cnn_training_curves.png`
-- `images/cnn_feature_maps.png`
-- `images/cnn_gradcam_examples.png`
-- `reports/cnn_history.csv`
-- `reports/cnn_model_summary.txt`
+- `output/jason_ep2/reports/cnn_history.csv`
+- `output/jason_ep2/reports/cnn_model_summary.txt`
+- `output/jason_ep2/images/cnn_training_curves.png`
+- `output/jason_ep2/images/cnn_feature_maps.png`
+- `output/jason_ep2/images/cnn_gradcam_examples.png`
+- `output/jason_ep2/images/cnn_gradcam_by_class.png`
 
-La revision de Jenaro conserva las cifras de referencia del equipo. La nueva
-ejecucion y sus mapas completos quedan identificados por separado en
-`output/jenaro_ep2/`, junto al notebook ejecutado y las versiones utilizadas.
-Sus figuras son `output/jenaro_ep2/images/cnn_training_curves.png`,
-`output/jenaro_ep2/images/cnn_feature_maps.png`,
-`output/jenaro_ep2/images/cnn_gradcam_examples.png` y
-`output/jenaro_ep2/images/cnn_gradcam_by_class.png`. Las imagenes de la raiz
-conservan la evidencia previa del equipo.
-El notebook y el script comparten `export_run` para que una nueva ejecucion
-guarde juntos resumen, historial, metricas, figuras y modelo, sin mezclar
-reportes de corridas distintas. La guia individual de la EP2 esta en
-`presentation/jenaro_defensa_ep2.md`; `jenaro_defensa.md` pertenece a la EP1.
+La implementación de Jenaro conserva la exportación compartida entre script y notebook y los mapas de las 24 clases. Su ejecución anterior permanece en `output/jenaro_ep2/`. La ejecución de Jason utiliza esa implementación sin cambiar la arquitectura ni ajustar parámetros con el test.
 
-## 6. Evaluacion en test
+## 6. Evaluación en test
 
-| Metrica | Resultado CNN |
-| --- | ---: |
-| Accuracy | 96,60% |
-| Precision macro | 0,9604 |
-| Recall macro | 0,9616 |
-| F1 macro | 0,9595 |
-| Imagenes evaluadas | 7.172 |
+El cierre utiliza la ejecución de Jason guardada en `output/jason_ep2/`. Sus métricas, figuras, predicciones y notebook ejecutado corresponden a la misma corrida, con semilla 42 y la arquitectura CNN de 243.352 parámetros. Las ejecuciones anteriores de 96,60 % y 96,81 % se conservan como antecedentes y no se combinan con estos resultados.
 
-Se reporta F1 macro junto con accuracy porque el primero entrega el mismo peso
-a cada clase. Esto evita que el buen rendimiento de una clase con mas ejemplos
-oculte el desempeno de otra clase.
+### 6.1 Métricas globales
 
-Las clases W, P, O, F y D obtuvieron F1 de 1,0. Las clases con menor F1 fueron
-T (0,7745), X (0,8586), R (0,8723), Q (0,9086) y L (0,9187).
+El test oficial contiene 7.172 imágenes separadas de entrenamiento y validación. La predicción es la clase de mayor probabilidad softmax, convertida a su letra mediante el mapeo del proyecto.
 
-Las principales confusiones fueron T con X, G con Q, X con T, S con E y R con
-L. Estos pares comparten posiciones de dedos o siluetas similares, por lo que
-una pequena diferencia visual puede cambiar la prediccion.
+| Métrica | CNN de Jason | Interpretación |
+| --- | ---: | --- |
+| Accuracy de test | 98,03 % | Porcentaje total de imágenes con la clase correcta. |
+| Precisión macro | 0,9804 | Promedio de precisión por letra. |
+| Recall macro | 0,9773 | Promedio de recuperación de ejemplos reales por letra. |
+| F1 macro | 0,9786 | Promedio del equilibrio entre precisión y recall de cada letra. |
+| Aciertos | 7.031 | Predicciones correctas de 7.172. |
+| Errores | 141 | Predicciones diferentes de la clase real. |
 
-Evidencia:
+Accuracy se calcula como 7.031 / 7.172. Para cada clase, precisión = VP / (VP + FP), recall = VP / (VP + FN) y F1 = 2 × precisión × recall / (precisión + recall). El promedio macro asigna el mismo peso a las 24 letras. Se promedian los F1 individuales; el F1 macro no se calcula directamente desde precisión macro y recall macro.
 
-- `reports/cnn_metrics.json`
-- `reports/cnn_classification_report.txt`
-- `images/cnn_confusion_matrix.png`
-- `images/cnn_correct_examples.png`
-- `images/cnn_incorrect_examples.png`
+Las métricas macro complementan el accuracy porque el test contiene cantidades distintas por letra: E tiene 498 imágenes y R tiene 144. El resultado describe este test y no implica el mismo rendimiento con cualquier cámara o persona.
 
-## 7. Comparacion objetiva MLP versus CNN
+### 6.2 Matriz de confusión y errores por clase
 
-| Metrica | MLP EP1 | CNN EP2 | Interpretacion |
-| --- | ---: | ---: | --- |
-| Parametros | 569.240 | 243.352 | La CNN usa 57,25% menos. |
-| Tiempo | 31,50 s | 41,41 s | La CNN tarda 9,91 s mas en esta maquina. |
-| Accuracy validacion | 100,00% | 100,00% | Ambos ajustan muy bien el split interno. |
-| Accuracy test | 79,71% | 96,60% | La CNN mejora 16,89 puntos porcentuales. |
-| F1 macro test | 0,7760 | 0,9595 | La CNN mejora de forma consistente entre clases. |
-| Brecha validacion-test | 20,29 pp | 3,40 pp | La CNN generaliza mucho mejor. |
+![Matriz de confusión de la ejecución de Jason](output/jason_ep2/images/cnn_confusion_matrix.png)
 
-La mejora no se atribuye a un cambio de dataset: ambos modelos usan las mismas
-imagenes, normalizacion y particiones. La diferencia se explica principalmente
-por el sesgo inductivo de las convoluciones, que aprovechan patrones locales y
-comparten pesos a lo largo de la imagen.
+Las filas indican la clase real y las columnas la predicción. La diagonal suma los 7.031 aciertos y las celdas restantes suman los 141 errores. Los siguientes conteos se recalcularon desde el modelo guardado y se exportaron como CSV; ya no dependen de leer una figura.
+
+| Letra real | Predicción incorrecta | Casos |
+| --- | --- | ---: |
+| T | X | 22 |
+| R | V | 21 |
+| X | T | 21 |
+| H | G | 20 |
+| G | P | 15 |
+| K | Y | 15 |
+
+Las clases con menor F1 son:
+
+| Letra | Precisión | Recall | F1 | Imágenes reales |
+| --- | ---: | ---: | ---: | ---: |
+| T | 0,9139 | 0,8992 | 0,9065 | 248 |
+| R | 0,9762 | 0,8542 | 0,9111 | 144 |
+| X | 0,9179 | 0,9213 | 0,9196 | 267 |
+| G | 0,9425 | 0,9425 | 0,9425 | 348 |
+| S | 0,9833 | 0,9553 | 0,9691 | 246 |
+
+T tiene el menor F1, 0,9065. R presenta recall de 0,8542: recupera aproximadamente el 85 % de sus imágenes y pierde cerca del 15 %. X presenta F1 de 0,9196. La diagonal dominante resume el buen desempeño general, pero estas dificultades por letra siguen siendo relevantes.
+
+Las confusiones T como X y X como T son direcciones distintas del error. Las posiciones parecidas de los dedos o la silueta son hipótesis visuales razonables, no causas demostradas por la matriz.
+
+### 6.3 Ejemplos correctos e incorrectos
+
+![Ejemplos correctos de la CNN de Jason](output/jason_ep2/images/cnn_correct_examples.png)
+
+Se seleccionan G correctamente reconocida como G y K correctamente reconocida como K, presentes en la primera fila. Estas mismas letras también aparecen entre los errores, lo que permite comparar casos dentro de una clase.
+
+![Ejemplos incorrectos de la CNN de Jason](output/jason_ep2/images/cnn_incorrect_examples.png)
+
+En la figura de errores se observan H como G, R como V y X como T en la primera fila; G como P en el centro y T como X en la última fila. G/G frente a G/P muestra que la misma clase puede tener aciertos y errores. T/X y X/T ilustran una confusión en ambas direcciones. El código muestra los primeros nueve aciertos y errores del test, por lo que estas figuras son ilustrativas y no una muestra aleatoria.
+
+Fuentes: `output/jason_ep2/reports/cnn_metrics.json`, `cnn_predictions.csv`, `cnn_confusion_matrix.csv`, `cnn_per_class_metrics.csv` y `cnn_top_confusions.csv`, en la misma carpeta de reportes. El modelo guardado produjo las mismas cuatro métricas al volver a predecir las 7.172 imágenes, sin reentrenamiento.
+
+## 7. Comparación objetiva MLP versus CNN
+
+El MLP de referencia es `C_grande` de EP1, seleccionado por validación antes de consultar el test. Ambos modelos utilizan los mismos CSV, 24 clases, normalización a [0, 1] y partición estratificada con semilla 42. El MLP recibe vectores de 784 valores y la CNN tensores de 28 × 28 × 1.
+
+| Métrica | MLP EP1 | CNN Jason EP2 |
+| --- | ---: | ---: |
+| Parámetros | 569.240 | 243.352 |
+| Épocas completadas | 20 | 20 |
+| Tiempo registrado | 31,45 s | 137,20 s |
+| Accuracy de validación | 100,00 % | 100,00 % |
+| Accuracy de test | 79,71 % | 98,03 % |
+| Precisión macro de test | 0,7783 | 0,9804 |
+| Recall macro de test | 0,7859 | 0,9773 |
+| F1 macro de test | 0,7760 | 0,9786 |
+| Brecha validación menos test | 20,29 pp | 1,97 pp |
+
+![Comparación de accuracy y F1 macro sobre el test](output/jason_ep2/images/mlp_cnn_comparison.png)
+
+La CNN mejora el accuracy en **18,32 puntos porcentuales** y el F1 macro en **0,2025**, calculados antes de redondear. Utiliza **325.888 parámetros menos**, una reducción del **57,25 %**. La menor brecha con validación respalda un mejor rendimiento de esta configuración sobre el test oficial.
+
+Las convoluciones incorporan vecindad espacial y filtros compartidos, mientras el MLP utiliza conexiones densas sobre la entrada plana. Aplanar no elimina las intensidades de los píxeles; la diferencia es que el MLP no incorpora explícitamente esa estructura espacial. También cambian la regularización y el criterio de selección de pesos: la CNN usa Dropout y restaura los mejores pesos de validación; el MLP evalúa la última época. Por ello, se comparan configuraciones completas y no se aísla causalmente el efecto de la convolución.
+
+Los tiempos son registros históricos de ejecuciones con entornos distintos. La CNN de Jason tarda 137,20 s y el registro original del MLP indica 31,450219 s, que redondea a 31,45 s. Estos datos no permiten concluir una diferencia controlada de velocidad. Menos parámetros no implica menos operaciones ni menor duración. La comparación de accuracy y F1 usa el mismo test, pero tampoco aporta incertidumbre entre semillas.
+
+Fuentes: `reports/jenaro_integracion_test.json`, `reports/jenaro_entrenamiento.json` y `output/jason_ep2/reports/mlp_cnn_comparison_exact.csv`. La gráfica expresa F1 multiplicado por 100 para compartir escala con el accuracy.
 
 ## 8. Limitaciones y mejoras posibles
 
-- El test oficial puede representar condiciones distintas al split interno de
-  validacion, aunque la CNN reduce considerablemente la brecha.
-- El modelo reconoce letras estaticas y no puede representar J, Z o palabras en
-  movimiento.
-- Algunas senas tienen diferencias muy pequenas entre dedos y orientacion.
-- No se midio robustez con camaras, fondos, iluminaciones o personas externas.
-- Grad-CAM entrega una explicacion aproximada y no demuestra causalidad.
+### 8.1 Limitaciones
 
-Como trabajo futuro se propone probar data augmentation, Batch Normalization,
-busqueda sistematica de hiperparametros, validacion cruzada y un conjunto de
-imagenes externas. Para senas dinamicas seria necesario modelar secuencias de
-video.
+- El modelo reconoce 24 letras estáticas ASL. No reconoce J, Z, palabras completas ni movimiento, y no demuestra traducción de lengua de señas chilena.
+- El test oficial es distinto del split interno de validación. La brecha de 1,97 puntos es una observación, no una prueba de su causa. La similitud entre imágenes o cambios de distribución requieren análisis específico.
+- No se evaluaron cámaras, personas, fondos o iluminaciones externas. El 98,03 % no debe presentarse como rendimiento garantizado en condiciones reales.
+- Las imágenes de 28 × 28 limitan el detalle de los dedos. T, R y X conservan dificultades que el accuracy global oculta parcialmente.
+- Las ejecuciones registradas difieren en entorno y no constituyen un estudio controlado con múltiples semillas. No se estimaron intervalos de incertidumbre. No se seleccionó una nueva arquitectura usando este test; se ejecutó el flujo vigente para verificarlo.
+- Grad-CAM es una aproximación visual y no demuestra causalidad ni permite comparar confianza entre mapas normalizados por separado.
+
+### 8.2 Mejoras y evaluación propuesta
+
+| Propuesta | Cómo comprobarla |
+| --- | --- |
+| Aumentación moderada | Probar desplazamientos, rotaciones pequeñas y variaciones de intensidad que conserven la seña. Elegir por F1 macro y resultados por clase en validación. |
+| Batch Normalization o regularización | Cambiar una decisión por vez, con el mismo split y presupuesto. Medir antes de afirmar que mejora. |
+| Varias semillas y tiempos controlados | Reportar media y dispersión. Medir velocidad con ambos modelos en el mismo entorno. |
+| Imágenes externas reservadas | Evaluar personas y condiciones distintas, separando por persona cuando sea posible. |
+| Secuencias de video | Para señas dinámicas se necesitan datos temporales y un modelo que procese secuencias. |
+
+El test actual ya se examinó para analizar errores. Los ajustes posteriores deben elegirse con validación y comprobarse finalmente en un conjunto independiente reservado.
 
 ## 9. Conclusiones
 
-La CNN fue adecuada para este problema porque conserva la estructura espacial
-de las imagenes y aprende caracteristicas locales. Frente al MLP, consiguio un
-accuracy de test 16,89 puntos mayor y un F1 macro 0,1835 superior con menos de
-la mitad de los parametros. Su costo fue un tiempo de entrenamiento algo mayor.
+La ejecución de Jason alcanzó **98,03 % de accuracy** y **0,9786 de F1 macro** sobre 7.172 imágenes del test oficial, con 7.031 aciertos y 141 errores. Frente al MLP de EP1, mejoró el accuracy en **18,32 puntos porcentuales** y el F1 macro en **0,2025**, con **57,25 % menos parámetros**.
 
-El resultado principal no es solamente el 96,60% de accuracy, sino la mejora
-en generalizacion: la brecha entre validacion y test se redujo de 20,29 a 3,40
-puntos porcentuales. Los errores restantes se concentran en senas visualmente
-parecidas, lo que orienta las proximas mejoras del proyecto.
+La brecha entre validación y test disminuyó de 20,29 a 1,97 puntos porcentuales. Esto respalda una mejor generalización al test oficial para la configuración CNN evaluada, sin demostrar todavía robustez externa. El resultado es coherente con el uso de patrones espaciales y filtros compartidos, aunque también cambian otras decisiones de entrenamiento.
+
+Las clases T, R y X orientan la revisión de errores. El siguiente paso es probar mejoras controladas y evaluar imágenes externas reservadas. El alcance demostrado sigue siendo la clasificación de letras estáticas ASL en este dataset.
 
 ## 10. Reproducibilidad y aportes
 

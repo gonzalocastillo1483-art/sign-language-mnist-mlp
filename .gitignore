@@ -66,3 +66,7 @@ output/jenaro_ep2/models/
 .codex-finalizer/
 .chart-data-*/
 .codex-jenaro-*/
+
+# Evidencia de evaluación y cierre de Jason EP2.
+output/jason_ep2/models/
+!reports/jason_ep2_revision.md

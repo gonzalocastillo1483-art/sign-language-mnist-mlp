@@ -1,7 +1,7 @@
 # Guion de presentacion EP2
 
 El guion esta pensado para explicar decisiones, no para leer todo el texto de
-las diapositivas. Los numeros corresponden a la ejecucion de referencia.
+las diapositivas. Los resultados del cierre corresponden a la ejecución de Jason en `output/jason_ep2/`.
 
 ## 00:00-00:35 - Diapositiva 1: caso y continuidad (Gonzalo)
 
@@ -14,9 +14,7 @@ aporta una arquitectura disenada para imagenes."
 ## 00:35-01:30 - Diapositiva 2: continuidad y cambio de entrada (Gonzalo)
 
 "No volvimos a hacer la limpieza de la EP1. Reutilizamos el mismo dataset ya
-validado, las mismas 24 clases, las mismas particiones y la semilla 42. Esto es
-importante porque permite atribuir las diferencias de rendimiento al cambio de
-arquitectura. El MLP recibia cada imagen como un vector plano de 784 valores;
+validado, las mismas 24 clases, las mismas particiones y la semilla 42. Esto permite comparar las configuraciones manteniendo los datos y las particiones. El MLP recibia cada imagen como un vector plano de 784 valores;
 la CNN recibe la misma informacion conservando su forma espacial."
 
 ## 01:30-02:30 - Diapositiva 3: preparacion para la CNN (Gonzalo)
@@ -49,10 +47,10 @@ perdida es sparse categorical crossentropy porque tenemos una etiqueta entera y
 una sola clase correcta entre 24; no usamos one-hot. Dropout desactiva
 activaciones al azar durante train y se desactiva al validar. Los callbacks
 observan val_loss: EarlyStopping tiene paciencia 4 y restaura los mejores pesos;
-ReduceLROnPlateau tiene paciencia 2 y divide la tasa por dos. En la referencia
-se completaron 20 epocas y no hubo parada anticipada. La tasa usada paso de
-0,001 a 0,0005 y 0,00025; al terminar se redujo a 0,000125 sin una epoca
-adicional. El tiempo de referencia fue 41,41 segundos."
+ReduceLROnPlateau tiene paciencia 2 y divide la tasa por dos. En esta ejecución
+se completaron 20 épocas, no hubo parada anticipada y se restauraron los pesos
+de la época 19. El historial registra las tasas utilizadas. El entrenamiento
+de esta corrida duró 137,20 segundos."
 
 ## 04:50-05:50 - Diapositiva 6: curvas e interpretabilidad (Jenaro)
 
@@ -71,81 +69,70 @@ El guion individual ampliado y las preguntas de Jenaro estan en
 
 Jenaro: "Jason presentara la evaluacion final y la comparacion con el MLP."
 
-## 06:00-07:00 - Diapositiva 7: resultados de test (Jason)
+## Bloque de Jason de 06:00 a 10:00
 
-"En las 7.172 imagenes de test, la CNN alcanzo 96,60% de accuracy, 0,9604 de
-precision macro, 0,9616 de recall macro y 0,9595 de F1 macro. Usamos F1 macro
-porque calcula el resultado por clase y luego las pondera por igual, de modo que
-una clase con mas ejemplos no domina la evaluacion."
+## Diapositiva 7 Métricas de test
 
-## 07:00-08:15 - Diapositiva 8: comparacion MLP versus CNN (Jason)
+**Tiempo: 06:00–07:00, 60 segundos.**
 
-"El MLP obtuvo 79,71% de accuracy de test y la CNN 96,60%, una mejora de 16,89
-puntos porcentuales. El F1 macro subio de 0,7760 a 0,9595. Ademas, la CNN uso
-243.352 parametros frente a 569.240 del MLP. Su costo fue entrenar cerca de 10
-segundos mas. La brecha entre validacion y test bajo de 20,29 a 3,40 puntos, por
-lo que la CNN generaliza mucho mejor."
+La evaluación utiliza las siete mil ciento setenta y dos imágenes del test oficial, separadas del entrenamiento. La CNN logró noventa y ocho coma cero tres por ciento de accuracy: siete mil treinta y un aciertos y ciento cuarenta y un errores. La precisión macro fue cero coma nueve ocho cero cuatro, el recall macro cero coma nueve siete siete tres y el F1 macro cero coma nueve siete ocho seis. Las métricas macro dan el mismo peso a cada letra, aunque tengan cantidades distintas de ejemplos. En la matriz, las filas son las clases reales y las columnas las predicciones. La diagonal concentra los aciertos. Verificamos las métricas usando nuevamente el modelo guardado, sin volver a entrenarlo.
 
-## 08:15-09:10 - Diapositiva 9: errores y matriz de confusion (Jason)
+## Diapositiva 8 Comparación MLP y CNN
 
-"La diagonal dominante de la matriz indica que la mayoria de las imagenes se
-clasifican correctamente. Los errores mas frecuentes fueron T con X, G con Q y
-X con T. Son senas con formas o posiciones de dedos parecidas. T fue la clase
-con menor F1, con 0,7745, por lo que es el principal foco para mejorar."
+**Tiempo: 07:00–08:15, 75 segundos.**
 
-## 09:10-10:00 - Diapositiva 10: conclusiones (Jason)
+Ambos modelos utilizan los mismos datos, clases y partición con semilla cuarenta y dos. El MLP obtuvo setenta y nueve coma setenta y uno por ciento de accuracy y la CNN noventa y ocho coma cero tres. La mejora es de dieciocho coma treinta y dos puntos porcentuales. El F1 macro sube de cero coma siete siete seis cero a cero coma nueve siete ocho seis. La CNN utiliza aproximadamente doscientos cuarenta y tres mil parámetros frente a quinientos sesenta y nueve mil del MLP: cincuenta y siete coma veinticinco por ciento menos. La brecha entre validación y test baja de veinte coma veintinueve a uno coma noventa y siete puntos. Esto respalda mejor generalización al test oficial. El entrenamiento de esta CNN duró ciento treinta y siete segundos. Los tiempos pertenecen a entornos distintos y no permiten comparar velocidad de forma controlada. También cambian decisiones de regularización y selección de pesos.
 
-"Concluimos que la CNN es mas adecuada para este problema porque conserva la
-estructura espacial y aprende patrones locales compartiendo pesos. Mejoro
-fuertemente el rendimiento y la generalizacion usando menos parametros. Las
-limitaciones son que solo reconoce senas estaticas y que no probamos imagenes
-externas. Como trabajo futuro proponemos data augmentation, Batch Normalization
-y validacion con camaras y personas distintas."
+## Diapositiva 9 Aciertos y errores
 
-Jason debe terminar la ultima frase cuando el cronometro marque **10:00**.
+**Tiempo: 08:15–09:10, 55 segundos.**
 
-## Respuestas cortas para la defensa
+Ahora mostramos una G correctamente reconocida y otra G confundida con P. También vemos una T clasificada como X y una X clasificada como T. Los conteos de toda la evaluación muestran veintidós casos de T como X, veintiuno de R como V y veintiuno de X como T. La clase T tiene el menor F1, cero coma nueve cero seis cinco, seguida por R y X. Esto permite identificar dónde concentrar una próxima revisión. Las siluetas y posiciones parecidas de los dedos son explicaciones posibles, aunque estas figuras y la matriz por sí solas no demuestran la causa de los errores.
 
-**¿Por que una CNN y no otro MLP?**  
-Porque la CNN conserva la posicion de los pixeles, aprende patrones locales y
-comparte filtros. El MLP aplana la imagen y pierde esa relacion espacial.
+## Diapositiva 10 Conclusiones
 
-**¿Por que softmax?**  
-Porque necesitamos 24 probabilidades que sumen 1 y elegir una sola clase.
+**Tiempo: 09:10–10:00, 50 segundos.**
 
-**¿Por que no binary crossentropy?**  
-Porque no son 24 decisiones independientes. Cada imagen pertenece a una sola
-de 24 clases mutuamente excluyentes.
+Concluimos que esta CNN mejora el rendimiento sobre el test oficial y utiliza menos parámetros que el MLP. Su estructura aprovecha patrones locales de la imagen, lo que es coherente con la mejora observada. El alcance sigue siendo reconocer veinticuatro letras estáticas ASL. No evaluamos cámaras ni personas externas, y no reconocemos J, Z ni secuencias de video. Proponemos probar aumentación moderada y evaluar imágenes externas reservadas. Los ajustes deben elegirse con validación, conservando una evaluación independiente para comprobar si la mejora se mantiene. Muchas gracias.
 
-**¿Por que sparse categorical crossentropy?**  
-Porque las etiquetas son indices enteros. Categorical crossentropy tambien
-serviria si primero las convirtieramos a one-hot.
+## Respuestas para la defensa
 
-**¿Por que accuracy y F1 macro?**  
-Accuracy resume el porcentaje total de aciertos. F1 macro revisa cada clase con
-el mismo peso y combina precision y recall.
+**¿Qué mide accuracy?** La proporción de aciertos globales: 7.031 / 7.172 = 98,03 % aproximadamente.
 
-**¿Por que normalizar dividiendo por 255?**  
-Porque 255 es la intensidad maxima de un pixel de 8 bits. Al dividir, el rango
-pasa de 0-255 a 0-1 sin cambiar la informacion relativa.
+**¿Precisión y recall son lo mismo?** No. Precisión pregunta cuántas predicciones de una letra son correctas. Recall pregunta cuántas imágenes reales de esa letra recupera el modelo.
 
-**¿Por que pooling?**  
-Reduce el tamano de los mapas, disminuye calculo y conserva las activaciones mas
-fuertes de cada zona.
+**¿Por qué F1 macro?** Promedia el F1 de cada clase con el mismo peso. No es el F1 calculado a partir de los promedios de precisión y recall.
 
-**¿Por que Dropout?**  
-Ayuda a evitar que la red dependa demasiado de neuronas especificas y reduce el
-riesgo de sobreajuste.
+**¿Por qué 18,32 puntos porcentuales?** Es la diferencia entre 98,03 % y 79,71 %, usando los valores completos antes de redondear.
 
-**¿La CNN es mejor en todo?**  
-No. Fue mucho mejor en accuracy, F1, parametros y generalizacion, pero en esta
-ejecucion necesito mas tiempo de entrenamiento.
+**¿Por qué ahora el accuracy difiere de 96,60 % o 96,81 %?** Son ejecuciones distintas del mismo diseño con entornos distintos. Esta evaluación utiliza los pesos, métricas y figuras de la ejecución de Jason. No se cambió la arquitectura para buscar un resultado mejor en test.
 
-**¿Por que la validacion llega a 100% pero el test no?**  
-La validacion proviene del mismo archivo de entrenamiento y comparte mejor su
-distribucion. El test oficial contiene ejemplos distintos y es una prueba mas
-exigente de generalizacion.
+**¿De dónde salen los conteos?** De las predicciones del modelo guardado, exportadas en CSV. T como X tiene 22 casos; R como V y X como T tienen 21 cada uno.
 
-**¿Que significa Grad-CAM?**  
-Es un mapa de calor aproximado que muestra que regiones de la imagen influyeron
-mas en la clase predicha.
+**¿Por qué menos parámetros no implica entrenar más rápido?** El número de parámetros no mide todas las operaciones. Además, los tiempos registrados provienen de entornos distintos.
+
+**¿Qué tiempo del MLP es correcto?** El registro original indica 31,450219 s, que redondea a 31,45 s. La tabla histórica usaba 31,50 s. La comparación exacta lee el registro original.
+
+**¿Generaliza mejor?** Sobre este test oficial, sí: mejora accuracy y F1 y reduce la brecha con validación. No se ha demostrado el rendimiento con cámaras o personas externas.
+
+**¿Un 100 % de validación garantiza generalización?** No. Debe contrastarse con datos separados. La causa de la diferencia puede requerir revisar distribución y similitud entre imágenes.
+
+**¿Toda la mejora se debe a las convoluciones?** El diseño es coherente con la mejora, pero también cambian regularización y selección de pesos. No aislamos causalmente una sola decisión.
+
+**¿Qué conserva el MLP al aplanar?** Conserva los valores de los píxeles, pero no incorpora explícitamente filtros locales compartidos ni vecindad espacial.
+
+**¿Por qué no J y Z?** Requieren movimiento y no son clases presentes en este dataset estático. Tampoco evaluamos traducción de palabras ni lengua de señas chilena.
+
+**¿Qué propones mejorar?** Revisar T, R y X; probar aumentación moderada en validación y comprobar el desempeño en imágenes externas reservadas. El test ya analizado no debe usarse para elegir repetidamente cambios.
+
+**¿Qué es Grad-CAM?** Un mapa aproximado de regiones relacionadas con el puntaje de una clase. No prueba causalidad ni representa una medida de confianza.
+
+**¿Por qué softmax y sparse categorical crossentropy?** Hay una sola clase correcta entre 24. Softmax normaliza las salidas y la pérdida sparse admite etiquetas enteras. El MLP usa one-hot con categorical crossentropy para el mismo objetivo multiclase.
+
+## Ensayo
+
+Empieza en 06:00 grupal. Cambia a la diapositiva 8 en 07:00, a la 9 en 08:15 y a la 10 en 09:10. Termina en 10:00. Ajusta el texto a tu ritmo y señala las figuras sin leer cada decimal. Conoce también el flujo general para preguntas cruzadas.
+
+## Pregunta para otro grupo
+
+¿Cómo comprobaron que la mejora se mantiene con datos distintos a los utilizados para elegir hiperparámetros?

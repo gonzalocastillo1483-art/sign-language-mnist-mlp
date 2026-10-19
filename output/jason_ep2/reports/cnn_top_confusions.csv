@@ -1,0 +1,13 @@
+true_letter,predicted_letter,count
+T,X,22
+R,V,21
+X,T,21
+H,G,20
+G,P,15
+K,Y,15
+S,E,11
+G,Q,5
+M,S,4
+T,H,3
+U,R,3
+U,K,1

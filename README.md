@@ -53,27 +53,21 @@ El modelo se entrena con Adam (`learning_rate=0.001`),
 `sparse_categorical_crossentropy`, batch de 128 y hasta 20 epocas. Incluye
 `EarlyStopping` y `ReduceLROnPlateau` para controlar el entrenamiento.
 
-## Resultados de referencia
+## Resultados de la ejecución de Jason
 
-Ejecucion local con semilla 42:
+El cierre usa el notebook completo ejecutado con semilla 42 y las particiones originales. Sus evidencias están en `output/jason_ep2/`.
 
-| Metrica | MLP EP1 | CNN EP2 |
+| Métrica | MLP EP1 | CNN Jason EP2 |
 | --- | ---: | ---: |
-| Parametros | 569.240 | 243.352 |
-| Tiempo de entrenamiento | 31,50 s | 41,41 s |
-| Accuracy validacion | 100,00% | 100,00% |
-| Accuracy test | 79,71% | **96,60%** |
-| F1 macro test | 0,7760 | **0,9595** |
+| Parámetros | 569.240 | 243.352 |
+| Tiempo registrado | 31,45 s | 137,20 s |
+| Accuracy de validación | 100,00 % | 100,00 % |
+| Accuracy de test | 79,71 % | **98,03 %** |
+| F1 macro de test | 0,7760 | **0,9786** |
 
-La CNN aumenta el accuracy de test en **16,89 puntos porcentuales**, mejora el
-F1 macro en **0,1835** y utiliza aproximadamente **57,25% menos parametros**.
-En esta ejecucion tarda cerca de 9,91 segundos mas. La diferencia entre
-validacion y test baja de 20,29 puntos en el MLP a 3,40 puntos en la CNN, lo que
-indica una generalizacion mucho mejor.
+La CNN mejora el accuracy en **18,32 puntos porcentuales** y el F1 macro en **0,2025**, con **57,25 % menos parámetros**. La brecha validación-test baja de 20,29 a **1,97 puntos**. Los tiempos corresponden a entornos distintos y no constituyen una comparación controlada de velocidad.
 
-Las clases con menor F1 en la CNN fueron T, X, R, Q y L. Las confusiones mas
-frecuentes fueron T con X, G con Q y X con T, senas que comparten formas o
-posiciones visuales parecidas.
+Las clases con menor F1 son T, R y X. Las principales confusiones verificadas desde el modelo guardado son T como X (22), R como V (21) y X como T (21). Las ejecuciones previas de 96,60 % y 96,81 % se conservan como antecedentes, sin combinar sus métricas con la corrida actual.
 
 ## Division del trabajo EP2
 
@@ -128,17 +122,17 @@ La asignacion detallada y las tareas compartidas estan en
 
 - [Notebook ejecutable CNN](notebooks/03_sign_language_mnist_cnn_ep2.ipynb).
 - [Informe tecnico EP2](INFORME_TECNICO_EP2.md).
-- [Presentacion EP2](presentation/archivos/Sign_Language_MNIST_CNN_EP2.pptx).
+- [Presentación EP2 integrada](presentation/archivos/Sign_Language_MNIST_CNN_EP2_Jason.pptx).
 - [Guion de presentacion y defensa](presentation/guion_ep2.md).
 - [Guia individual de Jenaro para la EP2](presentation/jenaro_defensa_ep2.md).
-- [Metricas en JSON](reports/cnn_metrics.json).
-- [Reporte por clase](reports/cnn_classification_report.txt).
-- [Curvas de entrenamiento](images/cnn_training_curves.png).
-- [Matriz de confusion](images/cnn_confusion_matrix.png).
-- [Mapas de caracteristicas](images/cnn_feature_maps.png).
-- [Ejemplos Grad-CAM](images/cnn_gradcam_examples.png).
-- [Predicciones correctas](images/cnn_correct_examples.png) e
-  [incorrectas](images/cnn_incorrect_examples.png).
+- [Métricas de la ejecución elegida](output/jason_ep2/reports/cnn_metrics.json).
+- [Reporte por clase](output/jason_ep2/reports/cnn_classification_report.txt).
+- [Curvas de entrenamiento](output/jason_ep2/images/cnn_training_curves.png).
+- [Matriz de confusion](output/jason_ep2/images/cnn_confusion_matrix.png).
+- [Mapas de caracteristicas](output/jason_ep2/images/cnn_feature_maps.png).
+- [Ejemplos Grad-CAM](output/jason_ep2/images/cnn_gradcam_examples.png).
+- [Predicciones correctas](output/jason_ep2/images/cnn_correct_examples.png) e
+  [incorrectas](output/jason_ep2/images/cnn_incorrect_examples.png).
 
 El modelo entrenado se genera localmente como `models/cnn_sign_language.keras`
 y no se versiona porque puede reconstruirse ejecutando el notebook.
@@ -181,11 +175,11 @@ los reportes y las figuras de su corrida estan en `output/jenaro_ep2/`.
 La [PPT con las diapositivas 4 a 6 revisadas](presentation/archivos/Sign_Language_MNIST_CNN_EP2_Jenaro.pptx)
 conserva las diez diapositivas y las cifras de referencia del equipo.
 
-La referencia mantiene 96,60% de test y 41,41 s. La corrida local de Jenaro
-obtuvo 96,81%, F1 macro 0,9630 y 127,95 s en otro entorno. Antes de integrar
-la evaluacion y el cierre, elegir una corrida y mantener coherentes las cifras
-de informe, README, notebook y PPT. Los tiempos entre entornos distintos no
-permiten comparar velocidad.
+La referencia histórica obtuvo 96,60 % de test y 41,41 s. La corrida de Jenaro
+obtuvo 96,81 %, F1 macro 0,9630 y 127,95 s en otro entorno. El cierre actual
+utiliza la ejecución de Jason: 98,03 %, F1 macro 0,9786 y 137,20 s. Las corridas
+se mantienen identificadas por separado. Los tiempos entre entornos distintos
+no permiten comparar velocidad.
 
 El codigo comparte la exportacion completa entre notebook y consola e incluye
 Grad-CAM de las 24 clases. El modelo `.keras` se reconstruye localmente:
@@ -219,3 +213,18 @@ src/sign_mlp/           Codigo reutilizable para datos, modelos y evaluacion
 
 El informe original de la EP1 permanece en
 [`INFORME_TECNICO.md`](INFORME_TECNICO.md).
+
+## Evaluación y cierre de Jason
+
+- [Notebook completo ejecutado](output/jason_ep2/03_sign_language_mnist_cnn_ep2_ejecutado.ipynb).
+- [Guion individual](presentation/GUION_JASON_EP2.md) y [diapositivas 7 a 10](presentation/archivos/Jason_EP2_Diapositivas_7_a_10.pptx).
+- [Evaluación verificada](output/jason_ep2/reports/jason_evaluacion_verificada.json), [predicciones](output/jason_ep2/reports/cnn_predictions.csv) y [matriz numérica](output/jason_ep2/reports/cnn_confusion_matrix.csv).
+- [Comparación con métricas y tiempo original del MLP](output/jason_ep2/reports/mlp_cnn_comparison_exact.csv).
+
+El script `scripts/evaluar_jason_ep2.py` vuelve a predecir desde los pesos guardados, comprueba las métricas y exporta evidencia exacta sin entrenar. Ejecutar desde la raíz:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\evaluar_jason_ep2.py --project-root .
+```
+
+El modelo permanece local en `output/jason_ep2/models/cnn_sign_language.keras` y está excluido de Git. El cierre conserva los aportes de arquitectura e interpretabilidad de Jenaro. La sección 5 solo actualiza la corrida y sus evidencias para coincidir con la evaluación de las secciones 6 a 9.
