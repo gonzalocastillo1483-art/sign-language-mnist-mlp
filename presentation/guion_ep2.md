@@ -36,26 +36,36 @@ Gonzalo: "Ahora Jenaro explicara como la CNN procesa esos tensores."
 ## 02:40-03:45 - Diapositiva 4: arquitectura CNN (Jenaro)
 
 "La red tiene tres bloques convolucionales con 32, 64 y 128 filtros de 3 por 3.
-Las convoluciones buscan patrones locales y ReLU introduce no linealidad. Cada
-bloque usa max pooling para reducir el tamano espacial y conservar las
-activaciones mas importantes. Al final usamos una capa densa de 128 neuronas y
-una salida softmax de 24 probabilidades."
+Los filtros comparten pesos en distintas posiciones y ReLU introduce no
+linealidad. Las convoluciones mantienen alto y ancho; cada max pooling de 2 por
+2 reduce la resolucion: 28, 14, 7 y 3. Flatten convierte 3 por 3 por 128 mapas
+en 1.152 valores. Al final usamos Dense 128 y softmax con 24 probabilidades.
+La arquitectura tiene 243.352 parametros entrenables."
 
 ## 03:45-04:50 - Diapositiva 5: entrenamiento y regularizacion (Jenaro)
 
 "Entrenamos con Adam, learning rate 0,001, batch de 128 y hasta 20 epocas. La
 perdida es sparse categorical crossentropy porque tenemos una etiqueta entera y
-una sola clase correcta entre 24. Dropout apaga neuronas al azar durante el
-entrenamiento para reducir sobreajuste. Tambien usamos EarlyStopping y reduccion
-del learning rate si la validacion deja de mejorar."
+una sola clase correcta entre 24; no usamos one-hot. Dropout desactiva
+activaciones al azar durante train y se desactiva al validar. Los callbacks
+observan val_loss: EarlyStopping tiene paciencia 4 y restaura los mejores pesos;
+ReduceLROnPlateau tiene paciencia 2 y divide la tasa por dos. En la referencia
+se completaron 20 epocas y no hubo parada anticipada. La tasa usada paso de
+0,001 a 0,0005 y 0,00025; al terminar se redujo a 0,000125 sin una epoca
+adicional. El tiempo de referencia fue 41,41 segundos."
 
 ## 04:50-05:50 - Diapositiva 6: curvas e interpretabilidad (Jenaro)
 
 "Las curvas muestran que aumenta el accuracy y disminuye la perdida. Los mapas
-de caracteristicas permiten ver que las primeras capas detectan bordes y la
-silueta de la mano, mientras que las capas profundas concentran patrones mas
-abstractos. Grad-CAM destaca las regiones de la imagen que mas influyen en la
-prediccion."
+de caracteristicas muestran canales seleccionados de tres profundidades para
+la misma imagen. Las primeras respuestas mantienen contornos y las profundas
+son mas pequenas y selectivas. Grad-CAM combina mapas con gradientes de una
+clase y los superpone a la entrada. Revisamos aciertos, errores y una muestra
+por cada una de las 24 clases. Puede destacar mano, bordes o fondo; el mapa
+es aproximado, esta normalizado por imagen y no demuestra causalidad."
+
+El guion individual ampliado y las preguntas de Jenaro estan en
+[`jenaro_defensa_ep2.md`](jenaro_defensa_ep2.md).
 
 ## 05:50-06:00 - Cambio de expositor
 

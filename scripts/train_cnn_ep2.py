@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
+import argparse
 import json
+import platform
 import sys
 import time
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
-
-import matplotlib
-
-matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -33,6 +32,7 @@ from sign_mlp.data import prepare_sign_mnist_cnn_data
 from sign_mlp.evaluate import (
     plot_confusion,
     plot_feature_maps,
+    plot_gradcam_by_class,
     plot_gradcam_examples,
     plot_history,
     plot_prediction_examples,
@@ -79,43 +79,30 @@ def plot_model_comparison(comparison):
     return fig
 
 
-def main():
-    set_global_seed(SEED)
-
-    data = prepare_sign_mnist_cnn_data(
-        ROOT / "data" / "raw",
-        validation_size=0.2,
-        random_state=SEED,
-    )
+def export_run(
+    data,
+    model,
+    history,
+    fit_seconds,
+    output_dir=ROOT,
+    *,
+    seed=SEED,
+    epochs_requested=EPOCHS,
+    batch_size=BATCH_SIZE,
+    learning_rate=LEARNING_RATE,
+):
+    """Export one run consistently from the CLI or the interactive notebook."""
+    output_dir = Path(output_dir).resolve()
     X_train = data["X_train"]
     X_val = data["X_val"]
     X_test = data["X_test"]
-    y_train = data["y_train"]
     y_val = data["y_val"]
     y_test = data["y_test"]
     index_to_label = data["index_to_label"]
 
-    model = build_cnn(
-        input_shape=data["metadata"]["input_shape"],
-        num_classes=data["metadata"]["num_classes"],
-        learning_rate=LEARNING_RATE,
-    )
-
-    started = time.perf_counter()
-    history = model.fit(
-        X_train,
-        y_train,
-        validation_data=(X_val, y_val),
-        epochs=EPOCHS,
-        batch_size=BATCH_SIZE,
-        callbacks=training_callbacks(patience=4),
-        verbose=2,
-    )
-    fit_seconds = time.perf_counter() - started
-
     val_loss, val_accuracy = model.evaluate(X_val, y_val, verbose=0)
     test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=0)
-    probabilities = model.predict(X_test, batch_size=BATCH_SIZE, verbose=0)
+    probabilities = model.predict(X_test, batch_size=batch_size, verbose=0)
     predictions = np.argmax(probabilities, axis=1)
 
     precision_macro = precision_score(
@@ -139,9 +126,9 @@ def main():
         output_dict=True,
     )
 
-    reports_dir = ROOT / "reports"
-    images_dir = ROOT / "images"
-    models_dir = ROOT / "models"
+    reports_dir = output_dir / "reports"
+    images_dir = output_dir / "images"
+    models_dir = output_dir / "models"
     for directory in (reports_dir, images_dir, models_dir):
         directory.mkdir(parents=True, exist_ok=True)
 
@@ -166,22 +153,32 @@ def main():
         per_class,
         key=lambda name: per_class[name]["f1-score"],
     )
+    versions = {}
+    for package in ("tensorflow", "keras", "numpy", "pandas", "matplotlib", "scikit-learn"):
+        try:
+            versions[package] = version(package)
+        except PackageNotFoundError:
+            versions[package] = "unavailable"
+
     metrics = {
         "model": "CNN_EP2",
-        "seed": SEED,
+        "seed": seed,
+        "python": platform.python_version(),
+        "platform": platform.platform(),
+        "versions": versions,
         "input_shape": list(data["metadata"]["input_shape"]),
         "num_classes": data["metadata"]["num_classes"],
         "train_images": int(len(X_train)),
         "validation_images": int(len(X_val)),
         "test_images": int(len(X_test)),
-        "epochs_requested": EPOCHS,
+        "epochs_requested": epochs_requested,
         "epochs_completed": int(len(history.history["loss"])),
-        "batch_size": BATCH_SIZE,
-        "learning_rate_initial": LEARNING_RATE,
+        "batch_size": batch_size,
+        "learning_rate_initial": learning_rate,
         "optimizer": "Adam",
         "loss": "sparse_categorical_crossentropy",
         "parameters": int(model.count_params()),
-        "fit_seconds": fit_seconds,
+        "fit_seconds": float(fit_seconds),
         "validation_loss": float(val_loss),
         "validation_accuracy": float(val_accuracy),
         "test_loss": float(test_loss),
@@ -199,10 +196,9 @@ def main():
             for name in ordered_classes[:5]
         ],
     }
-    (reports_dir / "cnn_metrics.json").write_text(
-        json.dumps(metrics, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
+    metrics_json = json.dumps(metrics, indent=2, ensure_ascii=False)
+    for filename in ("cnn_metrics.json", "cnn_metrics_notebook.json"):
+        (reports_dir / filename).write_text(metrics_json, encoding="utf-8")
 
     comparison = pd.DataFrame(
         [
@@ -272,8 +268,49 @@ def main():
         ),
         images_dir / "cnn_gradcam_examples.png",
     )
+    save_figure(
+        plot_gradcam_by_class(model, X_test, y_test, predictions, index_to_label),
+        images_dir / "cnn_gradcam_by_class.png",
+    )
 
     model.save(models_dir / "cnn_sign_language.keras")
+    return metrics
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=ROOT,
+        help="Destination for reports/, images/, and models/ (default: project root).",
+    )
+    args = parser.parse_args()
+    plt.switch_backend("Agg")
+    set_global_seed(SEED)
+
+    data = prepare_sign_mnist_cnn_data(
+        ROOT / "data" / "raw",
+        validation_size=0.2,
+        random_state=SEED,
+    )
+    model = build_cnn(
+        input_shape=data["metadata"]["input_shape"],
+        num_classes=data["metadata"]["num_classes"],
+        learning_rate=LEARNING_RATE,
+    )
+    started = time.perf_counter()
+    history = model.fit(
+        data["X_train"],
+        data["y_train"],
+        validation_data=(data["X_val"], data["y_val"]),
+        epochs=EPOCHS,
+        batch_size=BATCH_SIZE,
+        callbacks=training_callbacks(patience=4),
+        verbose=2,
+    )
+    fit_seconds = time.perf_counter() - started
+    metrics = export_run(data, model, history, fit_seconds, output_dir=args.output_dir)
     print(json.dumps(metrics, indent=2, ensure_ascii=False))
 
 

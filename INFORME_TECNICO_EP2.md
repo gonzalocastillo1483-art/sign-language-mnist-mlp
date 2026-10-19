@@ -69,28 +69,82 @@ La arquitectura implementada es:
 | Clasificador | Flatten + Dense 128 ReLU + Dropout 0,40 | Integra las caracteristicas antes de clasificar. |
 | Salida | Dense 24, softmax | Produce una probabilidad para cada clase. |
 
+Las convoluciones usan `padding="same"` y paso 1: mantienen el alto y ancho
+antes del pooling. El flujo espacial es 28x28 -> 14x14 -> 7x7 -> 3x3; el
+ultimo pooling usa ventanas completas, por lo que 7 se reduce a 3. `Flatten`
+convierte 3x3x128 activaciones en 1.152 valores para la capa densa.
+
+Un filtro 3x3 aprende relaciones locales con pocos pesos. Los filtros se
+comparten en todas las posiciones; por ejemplo, la primera convolucion usa
+(3x3x1 + 1)x32 = 320 parametros, incluidos los sesgos. El crecimiento
+32 -> 64 -> 128 aumenta la cantidad de patrones disponibles mientras el
+pooling reduce el costo espacial. Es una decision de diseno de esta version,
+no el resultado de una busqueda que demuestre una arquitectura optima.
+
+ReLU calcula `max(0, x)` e introduce no linealidad entre las capas. Softmax
+normaliza las 24 salidas para elegir una clase mutuamente excluyente. El MLP
+conserva los valores de los pixeles al aplanar, pero sus capas densas no
+incorporan esta estructura de filtros locales compartidos.
+
 Se uso `sparse_categorical_crossentropy` porque las etiquetas se conservan como
-indices enteros y el problema tiene una sola clase correcta por imagen. No se
+indices enteros contiguos de 0 a 23, y el problema tiene una sola clase
+correcta por imagen. El mapeo a las etiquetas originales se conserva para
+mostrar las letras; no se utiliza one-hot en la CNN. No se
 uso perdida binaria porque las clases son mutuamente excluyentes y existen 24
 posibles resultados.
 
 El optimizador fue Adam con learning rate inicial de 0,001, batch de 128 y un
-maximo de 20 epocas. `EarlyStopping` restaura los mejores pesos si la perdida de
-validacion deja de mejorar, y `ReduceLROnPlateau` reduce el paso de aprendizaje
-cuando el avance se estanca. La semilla 42 facilita la reproducibilidad.
+maximo de 20 epocas. Adam mantiene estimaciones del promedio y de la magnitud
+de los gradientes para adaptar las actualizaciones por parametro. El batch
+produce 172 actualizaciones por epoca, incluida la ultima incompleta.
+
+`EarlyStopping` observa `val_loss`, con paciencia de 4 epocas y restauracion
+de los mejores pesos. `ReduceLROnPlateau` observa la misma perdida y reduce
+el learning rate a la mitad tras 2 epocas sin mejora suficiente, con minimo
+de 0,00001. Ambos callbacks usan sus umbrales predeterminados de mejora, que
+no son identicos. Dropout usa tasas de 0,25 y 0,40 solo durante el entrenamiento;
+en inferencia y validacion se desactiva. La semilla 42 y las operaciones
+deterministas facilitan repetir una corrida dentro del mismo entorno. Cambios
+de versiones o hardware pueden modificar numeros y tiempos.
 
 ## 5. Entrenamiento e interpretabilidad
 
 El modelo CNN tiene 243.352 parametros entrenables. En la ejecucion de
 referencia completo 20 epocas en 41,41 segundos y alcanzo 100% de accuracy de
-validacion.
+validacion. El resumen posterior al entrenamiento tambien incluye estados
+del optimizador Adam; esos estados no son parametros aprendidos adicionales
+de la arquitectura. El notebook previo registra otra ejecucion de 45,49 s;
+esa duracion no sustituye los 41,41 s de la referencia usada en la comparacion.
 
-Las curvas muestran que la perdida disminuye y el accuracy aumenta sin una
-separacion sostenida entre entrenamiento y validacion. Los mapas de
-caracteristicas muestran que las primeras capas responden a bordes y siluetas,
-mientras que las capas profundas conservan regiones mas abstractas de la mano.
-Los ejemplos Grad-CAM permiten observar que la decision se concentra
-principalmente sobre la forma de la mano y no sobre el fondo completo.
+En el historial de referencia, la perdida de entrenamiento baja de 2,3968 a
+0,0157 y la accuracy de 26,83% a 99,43%. La validacion alcanza 100% desde la
+epoca 7. El learning rate pasa de 0,001 a 0,0005 y luego a 0,00025;
+al cerrar la epoca 20 el callback lo reduce otra vez a 0,000125, sin utilizar
+esa ultima tasa en una nueva epoca. EarlyStopping no detiene antes del limite
+de 20 epocas. La menor `val_loss`
+se alcanza en la epoca 19 (indice 18 del CSV), cuyos pesos se restauran.
+
+La validacion supera al entrenamiento en buena parte de las curvas. Esto es
+compatible con Dropout activo en train e inactivo en validacion, y con que la
+metrica de entrenamiento acumula lotes mientras los pesos cambian. Las curvas
+no bastan para descartar sobreajuste ni demostrar generalizacion fuera del
+dataset; Jason analiza el test independiente.
+
+Los Feature Maps muestran los primeros ocho canales de `conv_1`, `conv_2` y
+`conv_3`, junto a la imagen original. Sus resoluciones son 28x28, 14x14 y 7x7
+antes del pooling correspondiente. Las respuestas pueden asociarse a
+contrastes, contornos y combinaciones mas selectivas; no se asigna un
+significado fijo a cada filtro a partir de una sola imagen.
+
+Grad-CAM pondera estos mapas con el gradiente del puntaje de una clase antes
+de softmax, sin cambiar el clasificador. Los mapas 7x7 se amplian y se
+superponen a la imagen para localizar las activaciones. Se explican tanto
+aciertos como errores para la clase predicha. Ademas se exporta un panel de
+las 24 clases, con una muestra por clase real y Grad-CAM dirigido a esa clase.
+La seleccion toma el primer acierto disponible, o el primer error si no hay
+aciertos. Cada mapa se normaliza por separado: sus colores no permiten
+comparar confianza entre imagenes y no prueban causalidad. Las activaciones
+pueden incluir partes de la mano y tambien bordes o fondo.
 
 Evidencia:
 
@@ -99,6 +153,19 @@ Evidencia:
 - `images/cnn_gradcam_examples.png`
 - `reports/cnn_history.csv`
 - `reports/cnn_model_summary.txt`
+
+La revision de Jenaro conserva las cifras de referencia del equipo. La nueva
+ejecucion y sus mapas completos quedan identificados por separado en
+`output/jenaro_ep2/`, junto al notebook ejecutado y las versiones utilizadas.
+Sus figuras son `output/jenaro_ep2/images/cnn_training_curves.png`,
+`output/jenaro_ep2/images/cnn_feature_maps.png`,
+`output/jenaro_ep2/images/cnn_gradcam_examples.png` y
+`output/jenaro_ep2/images/cnn_gradcam_by_class.png`. Las imagenes de la raiz
+conservan la evidencia previa del equipo.
+El notebook y el script comparten `export_run` para que una nueva ejecucion
+guarde juntos resumen, historial, metricas, figuras y modelo, sin mezclar
+reportes de corridas distintas. La guia individual de la EP2 esta en
+`presentation/jenaro_defensa_ep2.md`; `jenaro_defensa.md` pertenece a la EP1.
 
 ## 6. Evaluacion en test
 

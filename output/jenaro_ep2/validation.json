@@ -1,0 +1,21 @@
+{
+  "code_cells_executed_without_exceptions": 16,
+  "setup_verified_from_nested_directory": true,
+  "metrics_json_identical": true,
+  "exported_images": [
+    "cnn_training_curves",
+    "cnn_feature_maps",
+    "cnn_gradcam_examples",
+    "cnn_gradcam_by_class",
+    "cnn_confusion_matrix",
+    "cnn_correct_examples",
+    "cnn_incorrect_examples",
+    "mlp_cnn_comparison"
+  ],
+  "gradcam_classes_verified_from_saved_model": 24,
+  "regression_tests_passed": 4,
+  "dataset_sha256": {
+    "sign_mnist_train.csv": "4c2897f19fab2b0ae2a7e4fa82e969043315d9f3a1a9cc0948b576bf1189a7e5",
+    "sign_mnist_test.csv": "0e9d67bae23e67f40728e0b63bf15ad4bd5175947b8a9fac5dd9f17ce133c47b"
+  }
+}

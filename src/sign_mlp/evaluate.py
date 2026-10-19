@@ -95,36 +95,45 @@ def feature_map_model(model, layer_names=("conv_1", "conv_2", "conv_3")):
 
 
 def plot_feature_maps(model, image, layer_names=("conv_1", "conv_2", "conv_3"), maps_per_layer=8):
-    """Plot representative feature maps from selected convolutional layers."""
+    """Show the source image and the first channels of each selected layer."""
     image = np.asarray(image, dtype=np.float32)
     if image.ndim == 3:
         image = image[np.newaxis, ...]
 
     activations = feature_map_model(model, layer_names).predict(image, verbose=0)
+    if not isinstance(activations, (list, tuple)):
+        activations = [activations]
     fig, axes = plt.subplots(
         len(layer_names),
-        maps_per_layer,
-        figsize=(2 * maps_per_layer, 2.2 * len(layer_names)),
+        maps_per_layer + 1,
+        figsize=(2 * (maps_per_layer + 1), 2.5 * len(layer_names)),
+        squeeze=False,
     )
-    axes = np.atleast_2d(axes)
 
     for row, (layer_name, activation) in enumerate(zip(layer_names, activations)):
+        axes[row, 0].imshow(image[0].squeeze(), cmap="gray", vmin=0, vmax=1)
+        axes[row, 0].set_title(f"Entrada | {layer_name}\n{activation.shape[1:3]}")
+        axes[row, 0].axis("off")
         available = min(maps_per_layer, activation.shape[-1])
         for col in range(maps_per_layer):
-            ax = axes[row, col]
+            ax = axes[row, col + 1]
             ax.axis("off")
             if col < available:
                 ax.imshow(activation[0, :, :, col], cmap="viridis")
-            if col == 0:
-                ax.set_title(layer_name)
+                ax.set_title(f"Canal {col}")
 
-    fig.suptitle("Mapas de caracteristicas por profundidad")
+    fig.suptitle("Mapas por profundidad: primeros 8 canales, escala por mapa")
     fig.tight_layout()
     return fig
 
 
 def gradcam_heatmap(model, image, class_index=None, conv_layer_name="conv_3"):
-    """Compute a Grad-CAM heatmap for one image and one predicted or chosen class."""
+    """Explain a class logit, without changing the model's softmax or weights.
+
+    The EP2 classifier ends in a Dense softmax layer. Reconstruct its logits
+    from the layer input to avoid saturated softmax gradients. Algorithm:
+    https://keras.io/examples/vision/grad_cam/
+    """
     try:
         import tensorflow as tf
         from tensorflow import keras
@@ -136,35 +145,69 @@ def gradcam_heatmap(model, image, class_index=None, conv_layer_name="conv_3"):
     image = np.asarray(image, dtype=np.float32)
     if image.ndim == 3:
         image = image[np.newaxis, ...]
+    if image.ndim != 4 or image.shape[0] != 1:
+        raise ValueError("Grad-CAM expects exactly one image, with its channel axis.")
 
-    conv_layer = model.get_layer(conv_layer_name)
-    grad_model = keras.Model(
-        model.inputs,
-        [conv_layer.output, model.outputs[0]],
-        name="gradcam",
-    )
-
+    if not isinstance(model, keras.Sequential):
+        raise ValueError("Grad-CAM expects the EP2 Sequential CNN.")
+    model.get_layer(conv_layer_name)
+    output_layer = model.layers[-1]
+    if not isinstance(output_layer, keras.layers.Dense):
+        raise ValueError("Grad-CAM requires a final Dense classifier.")
     with tf.GradientTape() as tape:
-        conv_output, predictions = grad_model(image, training=False)
+        # Reuse the actual layers in order. Serialized Sequential models can
+        # retain multiple symbolic nodes; connecting their .output tensors
+        # may expose a different node from the one used by the classifier.
+        features = tf.convert_to_tensor(image)
+        conv_output = None
+        for layer in model.layers[:-1]:
+            features = layer(features, training=False)
+            if layer.name == conv_layer_name:
+                conv_output = features
+                tape.watch(conv_output)
+        if conv_output is None:
+            raise ValueError("The selected convolution must precede the classifier.")
+        logits = tf.linalg.matmul(features, output_layer.kernel)
+        if output_layer.use_bias:
+            logits = logits + output_layer.bias
         if class_index is None:
-            class_index = tf.argmax(predictions[0])
-        class_score = predictions[:, class_index]
+            class_index = int(tf.argmax(logits[0]))
+        class_index = int(class_index)
+        if not 0 <= class_index < output_layer.units:
+            raise ValueError("class_index is outside the classifier output range.")
+        class_score = logits[:, class_index]
 
     gradients = tape.gradient(class_score, conv_output)
+    if gradients is None:
+        raise ValueError("The selected convolution is not connected to the class score.")
     pooled_gradients = tf.reduce_mean(gradients, axis=(0, 1, 2))
     weighted = conv_output[0] * pooled_gradients
     heatmap = tf.reduce_sum(weighted, axis=-1)
     heatmap = tf.maximum(heatmap, 0)
     maximum = tf.reduce_max(heatmap)
-    heatmap = tf.where(maximum > 0, heatmap / maximum, heatmap)
+    heatmap = tf.math.divide_no_nan(heatmap, maximum)
     return heatmap.numpy(), int(class_index)
 
 
+def _show_gradcam_overlay(ax, image, heatmap):
+    """Resize a normalized map to the image coordinates and overlay it."""
+    import tensorflow as tf
+
+    image = np.asarray(image).squeeze()
+    resized = tf.image.resize(
+        heatmap[..., np.newaxis], image.shape, method="bilinear"
+    ).numpy().squeeze()
+    ax.imshow(image, cmap="gray", vmin=0, vmax=1)
+    ax.imshow(resized, cmap="inferno", vmin=0, vmax=1, alpha=0.65 * resized)
+    ax.axis("off")
+
+
 def plot_gradcam_examples(model, X, y_true, y_pred, index_to_label, max_items=6):
-    """Plot test images beside Grad-CAM maps for their predicted classes."""
+    """Plot original images beside overlays explaining their predicted classes."""
     count = min(max_items, len(X))
-    fig, axes = plt.subplots(count, 2, figsize=(6, 2.6 * count))
-    axes = np.atleast_2d(axes)
+    if count < 1:
+        raise ValueError("At least one example is required for Grad-CAM.")
+    fig, axes = plt.subplots(count, 2, figsize=(6, 2.6 * count), squeeze=False)
 
     for row in range(count):
         heatmap, predicted_index = gradcam_heatmap(
@@ -179,9 +222,53 @@ def plot_gradcam_examples(model, X, y_true, y_pred, index_to_label, max_items=6)
         axes[row, 0].set_title(f"Real: {real} | Pred: {predicted}")
         axes[row, 0].axis("off")
 
-        axes[row, 1].imshow(heatmap, cmap="inferno")
-        axes[row, 1].set_title("Activacion Grad-CAM")
-        axes[row, 1].axis("off")
+        _show_gradcam_overlay(axes[row, 1], X[row], heatmap)
+        axes[row, 1].set_title(f"Grad-CAM de {predicted}")
 
+    fig.suptitle("Clase predicha | mapa 7x7 ampliado, intensidad relativa por imagen")
     fig.tight_layout()
+    return fig
+
+
+def select_class_examples(y_true, y_pred, index_to_label):
+    """Choose the first correct example per true class, or its first error."""
+    y_true, y_pred = np.asarray(y_true), np.asarray(y_pred)
+    selected = []
+    for class_index in sorted(index_to_label):
+        candidates = np.flatnonzero(y_true == class_index)
+        if not len(candidates):
+            raise ValueError(f"No examples available for class {class_index}.")
+        correct = candidates[y_pred[candidates] == class_index]
+        selected.append(int(correct[0] if len(correct) else candidates[0]))
+    return selected
+
+
+def plot_gradcam_by_class(model, X, y_true, y_pred, index_to_label):
+    """Show a true-class Grad-CAM for every class, including misclassified ones."""
+    selected = select_class_examples(y_true, y_pred, index_to_label)
+    groups_per_row = 4
+    rows = int(np.ceil(len(selected) / groups_per_row))
+    fig, axes = plt.subplots(
+        rows, groups_per_row * 2, figsize=(18, rows * 2.6), squeeze=False
+    )
+    for ax in axes.flat:
+        ax.axis("off")
+    for position, (class_index, sample_index) in enumerate(
+        zip(sorted(index_to_label), selected)
+    ):
+        row, group = divmod(position, groups_per_row)
+        original, overlay = axes[row, group * 2:group * 2 + 2]
+        real = label_to_letter(index_to_label[class_index])
+        predicted = label_to_letter(index_to_label[int(y_pred[sample_index])])
+        heatmap, _ = gradcam_heatmap(model, X[sample_index], class_index=class_index)
+        original.imshow(X[sample_index].squeeze(), cmap="gray", vmin=0, vmax=1)
+        original.set_title(f"Real {real} | pred {predicted}\nTest #{sample_index}", fontsize=10)
+        _show_gradcam_overlay(overlay, X[sample_index], heatmap)
+        overlay.set_title(f"Grad-CAM clase {real}", fontsize=10)
+    fig.suptitle(
+        "Activacion de las 24 clases ASL | una imagen por clase real\n"
+        "Primer acierto disponible; si no existe, primer error. "
+        "Mapa 7x7 ampliado, intensidad relativa por imagen."
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.96), h_pad=3.5, w_pad=0.8)
     return fig

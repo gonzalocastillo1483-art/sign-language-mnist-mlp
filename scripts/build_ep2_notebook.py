@@ -37,7 +37,7 @@ El objetivo es clasificar una imagen estática de una seña ASL en una de las 24
     code(
         """
 from pathlib import Path
-import json
+import os
 import sys
 import time
 
@@ -45,23 +45,30 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (
-    accuracy_score,
     classification_report,
     f1_score,
     precision_score,
     recall_score,
 )
 
-ROOT = Path.cwd()
-if not (ROOT / "src").exists():
-    ROOT = ROOT.parent
+for candidate in (Path.cwd(), *Path.cwd().parents):
+    if (candidate / "src" / "sign_mlp").is_dir():
+        ROOT = candidate
+        break
+else:
+    raise FileNotFoundError("Abra este notebook dentro del repositorio del proyecto.")
 sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT / "scripts"))
+OUTPUT_DIR = Path(os.environ.get("EP2_OUTPUT_DIR", str(ROOT))).resolve()
+print("Destino de las evidencias:", OUTPUT_DIR)
 
+from train_cnn_ep2 import export_run
 from sign_mlp.cnn import build_cnn, set_global_seed, training_callbacks
 from sign_mlp.data import prepare_sign_mnist_cnn_data
 from sign_mlp.evaluate import (
     plot_confusion,
     plot_feature_maps,
+    plot_gradcam_by_class,
     plot_gradcam_examples,
     plot_history,
     plot_prediction_examples,
@@ -119,6 +126,8 @@ plt.show()
 ## 3. Diseño de la CNN
 
 La arquitectura utiliza tres bloques convolucionales con filtros `3 x 3`. Las capas aumentan de 32 a 128 filtros para aprender representaciones progresivamente más específicas. `MaxPooling2D` reduce el tamaño espacial y conserva las activaciones dominantes. Dropout reduce la dependencia de neuronas específicas. La capa softmax entrega una distribución sobre 24 clases.
+
+Con `padding="same"`, las convoluciones conservan alto y ancho. Los poolings reducen la resolución de 28 a 14, 7 y 3. `Flatten` entrega `3*3*128=1152` valores. ReLU introduce no linealidad. Las etiquetas son enteros consecutivos `0..23`, por lo que se usa pérdida sparse sin one-hot.
 """
     ),
     code(
@@ -138,6 +147,8 @@ model.summary()
 ## 4. Entrenamiento
 
 Se mantiene un máximo de 20 épocas y batch 128 para conservar la trazabilidad con la EP1. Adam comienza con learning rate 0,001. `ReduceLROnPlateau` reduce el paso cuando la pérdida de validación se estanca y `EarlyStopping` conserva los mejores pesos según `val_loss`.
+
+Los callbacks observan validación, nunca test. EarlyStopping tiene paciencia 4 y restaura los mejores pesos; ReduceLROnPlateau espera 2 épocas sin mejora suficiente, multiplica la tasa por 0,5 y tiene mínimo `1e-5`. Dropout está activo en train y desactivado en validación. Eso y la medición acumulada durante train pueden contribuir a que validación supere a train; no basta para concluir ausencia de sobreajuste.
 """
     ),
     code(
@@ -220,6 +231,8 @@ plt.show()
 ## 6. Feature maps y mapas de activación
 
 Las primeras capas mantienen bordes, contrastes y trazos locales. Las capas profundas producen mapas más pequeños y selectivos. Grad-CAM resume qué regiones de la última capa convolucional aportaron a una clase predicha. Estos mapas orientan la interpretación, pero no prueban por sí solos una causa del acierto o error.
+
+Se muestran los primeros ocho canales por capa junto a la entrada. Grad-CAM usa el puntaje anterior a softmax sin modificar el modelo. Cada mapa 7x7 se amplía y superpone a la imagen; su intensidad se normaliza por imagen, por lo que no compara confianza entre muestras. Las regiones pueden incluir mano, bordes o fondo. Método: [ejemplo oficial de Keras](https://keras.io/examples/vision/grad_cam/).
 """
     ),
     code(
@@ -242,6 +255,21 @@ plot_gradcam_examples(
     index_to_label,
     max_items=len(selected),
 )
+plt.show()
+"""
+    ),
+    md(
+        """
+### Grad-CAM de las 24 clases
+
+La siguiente cuadrícula incluye una imagen de test por clase real. El mapa se calcula para esa clase y se superpone a la imagen, indicando también la predicción del modelo. La comparación permite revisar qué regiones destacan en cada letra sin limitarse a los primeros aciertos y errores.
+
+Se elige el primer acierto de cada clase; si no existe, se muestra su primer error. Es una selección ilustrativa, no una estimación de rendimiento por clase.
+"""
+    ),
+    code(
+        """
+plot_gradcam_by_class(model, X_test, y_test, predictions, index_to_label)
 plt.show()
 """
     ),
@@ -303,34 +331,19 @@ Como mejoras futuras se pueden comparar aumentación de datos, regularización L
     ),
     code(
         """
-reports_dir = ROOT / "reports"
-images_dir = ROOT / "images"
-models_dir = ROOT / "models"
-for directory in (reports_dir, images_dir, models_dir):
-    directory.mkdir(parents=True, exist_ok=True)
-
-pd.DataFrame(history.history).to_csv(reports_dir / "cnn_history.csv", index_label="epoch")
-comparison.to_csv(reports_dir / "mlp_cnn_comparison.csv", index=False)
-(reports_dir / "cnn_classification_report.txt").write_text(report_text, encoding="utf-8")
-notebook_metrics = {
-    "model": "CNN_EP2",
-    "seed": SEED,
-    "parameters": int(model.count_params()),
-    "fit_seconds": float(fit_seconds),
-    "validation_loss": float(val_loss),
-    "validation_accuracy": float(val_accuracy),
-    "test_loss": float(test_loss),
-    "test_accuracy": float(test_accuracy),
-    "test_precision_macro": float(precision_macro),
-    "test_recall_macro": float(recall_macro),
-    "test_f1_macro": float(f1_macro),
-}
-(reports_dir / "cnn_metrics_notebook.json").write_text(
-    json.dumps(notebook_metrics, indent=2, ensure_ascii=False),
-    encoding="utf-8",
+notebook_metrics = export_run(
+    data,
+    model,
+    history,
+    fit_seconds,
+    output_dir=OUTPUT_DIR,
+    seed=SEED,
+    epochs_requested=EPOCHS,
+    batch_size=BATCH_SIZE,
+    learning_rate=LEARNING_RATE,
 )
-model.save(models_dir / "cnn_sign_language.keras")
-print("Evidencias actualizadas en reports/, images/ y models/.")
+print("Reportes, resumen, figuras y modelo exportados desde esta misma ejecución.")
+print("Destino:", OUTPUT_DIR)
 """
     ),
 ]

@@ -54,9 +54,15 @@ reports/*
 !images/cnn_incorrect_examples.png
 !images/cnn_feature_maps.png
 !images/cnn_gradcam_examples.png
+!images/cnn_gradcam_by_class.png
 !images/mlp_cnn_comparison.png
+
+# Revision individual EP2: evidencias pequenas, modelo reconstruible local.
+output/jenaro_ep2/models/
+!reports/jenaro_ep2_revision.md
 
 # Artefactos temporales de construccion y validacion de la presentacion
 .codex-pptx-build/
 .codex-finalizer/
 .chart-data-*/
+.codex-jenaro-*/

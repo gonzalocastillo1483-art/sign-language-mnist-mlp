@@ -130,6 +130,7 @@ La asignacion detallada y las tareas compartidas estan en
 - [Informe tecnico EP2](INFORME_TECNICO_EP2.md).
 - [Presentacion EP2](presentation/archivos/Sign_Language_MNIST_CNN_EP2.pptx).
 - [Guion de presentacion y defensa](presentation/guion_ep2.md).
+- [Guia individual de Jenaro para la EP2](presentation/jenaro_defensa_ep2.md).
 - [Metricas en JSON](reports/cnn_metrics.json).
 - [Reporte por clase](reports/cnn_classification_report.txt).
 - [Curvas de entrenamiento](images/cnn_training_curves.png).
@@ -164,6 +165,34 @@ python scripts\train_cnn_ep2.py
 
 Los CSV originales ya estan incluidos en `data/raw/`. La ejecucion vuelve a
 generar las metricas, figuras y el modelo.
+
+## Continuar desde el aporte de Jenaro EP2
+
+Para incorporar el bloque de arquitectura, entrenamiento e interpretabilidad:
+
+```powershell
+git switch ep2-cnn
+git pull --ff-only origin ep2-cnn
+```
+
+La [revision de Jenaro](reports/jenaro_ep2_revision.md) detalla los cambios y
+comprobaciones. El [notebook ejecutado](output/jenaro_ep2/03_sign_language_mnist_cnn_ep2_ejecutado.ipynb),
+los reportes y las figuras de su corrida estan en `output/jenaro_ep2/`.
+La [PPT con las diapositivas 4 a 6 revisadas](presentation/archivos/Sign_Language_MNIST_CNN_EP2_Jenaro.pptx)
+conserva las diez diapositivas y las cifras de referencia del equipo.
+
+La referencia mantiene 96,60% de test y 41,41 s. La corrida local de Jenaro
+obtuvo 96,81%, F1 macro 0,9630 y 127,95 s en otro entorno. Antes de integrar
+la evaluacion y el cierre, elegir una corrida y mantener coherentes las cifras
+de informe, README, notebook y PPT. Los tiempos entre entornos distintos no
+permiten comparar velocidad.
+
+El codigo comparte la exportacion completa entre notebook y consola e incluye
+Grad-CAM de las 24 clases. El modelo `.keras` se reconstruye localmente:
+
+```powershell
+python scripts\train_cnn_ep2.py --output-dir output\jenaro_ep2
+```
 
 ## Estructura
 

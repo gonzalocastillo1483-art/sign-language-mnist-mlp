@@ -1,0 +1,3 @@
+model,input_format,parameters,epochs_completed,fit_seconds,validation_accuracy,test_accuracy,test_f1_macro
+MLP C_grande (EP1),vector 784,569240,20,31.5,1.0,0.7971277237,0.7760310432
+CNN (EP2),tensor 28x28x1,243352,20,127.95474339998327,1.0,0.9680702686309814,0.96299827042651

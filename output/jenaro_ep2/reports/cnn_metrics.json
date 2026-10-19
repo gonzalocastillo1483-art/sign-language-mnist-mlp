@@ -1,0 +1,83 @@
+{
+  "model": "CNN_EP2",
+  "seed": 42,
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "versions": {
+    "tensorflow": "2.20.0",
+    "keras": "3.15.1",
+    "numpy": "2.3.5",
+    "pandas": "3.0.6",
+    "matplotlib": "3.11.2",
+    "scikit-learn": "1.9.1"
+  },
+  "input_shape": [
+    28,
+    28,
+    1
+  ],
+  "num_classes": 24,
+  "train_images": 21964,
+  "validation_images": 5491,
+  "test_images": 7172,
+  "epochs_requested": 20,
+  "epochs_completed": 20,
+  "batch_size": 128,
+  "learning_rate_initial": 0.001,
+  "optimizer": "Adam",
+  "loss": "sparse_categorical_crossentropy",
+  "parameters": 243352,
+  "fit_seconds": 127.95474339998327,
+  "validation_loss": 5.2791987400269136e-05,
+  "validation_accuracy": 1.0,
+  "test_loss": 0.10176575183868408,
+  "test_accuracy": 0.9680702686309814,
+  "test_accuracy_check": 0.9680702732849972,
+  "test_precision_macro": 0.9629601259131473,
+  "test_recall_macro": 0.9650364678595379,
+  "test_f1_macro": 0.96299827042651,
+  "best_classes_by_f1": [
+    {
+      "class": "W",
+      "f1": 1.0
+    },
+    {
+      "class": "O",
+      "f1": 1.0
+    },
+    {
+      "class": "F",
+      "f1": 1.0
+    },
+    {
+      "class": "E",
+      "f1": 1.0
+    },
+    {
+      "class": "D",
+      "f1": 1.0
+    }
+  ],
+  "worst_classes_by_f1": [
+    {
+      "class": "T",
+      "f1": 0.8017817371937639
+    },
+    {
+      "class": "X",
+      "f1": 0.8770053475935828
+    },
+    {
+      "class": "R",
+      "f1": 0.8808664259927798
+    },
+    {
+      "class": "G",
+      "f1": 0.9425287356321839
+    },
+    {
+      "class": "Q",
+      "f1": 0.9452449567723343
+    }
+  ]
+}
