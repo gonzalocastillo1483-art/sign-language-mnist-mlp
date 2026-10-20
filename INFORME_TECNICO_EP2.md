@@ -12,6 +12,31 @@ El caso corresponde al reconocimiento de letras estaticas del alfabeto ASL a
 partir de imagenes de manos. Una aplicacion posible es apoyar herramientas
 educativas o de accesibilidad que necesiten identificar una sena individual.
 
+### Division de redaccion, evidencias y defensa
+
+El informe se organiza por bloques completos para distribuir de forma
+equilibrada la redaccion, la revision tecnica y la defensa oral. Cada
+integrante debe revisar que sus secciones coincidan con el notebook, las
+figuras y los resultados finales del repositorio.
+
+| Responsable | Secciones del informe | Trabajo que debe dejar listo |
+| --- | --- | --- |
+| Gonzalo Castillo | 1. Objetivo; 2. Continuidad; 3. Datos y preparacion | Explicar el caso, justificar la continuidad con la EP1, verificar dataset, clases, particiones, semilla 42, normalizacion y conversion de vector de 784 valores a tensor `(28, 28, 1)`. |
+| Jenaro Marin | 4. Arquitectura; 5. Entrenamiento e interpretabilidad | Justificar capas convolucionales, pooling, ReLU, softmax, perdida, Adam, Dropout y callbacks; comprobar curvas, Feature Maps y Grad-CAM. |
+| Jason Aguilera | 6. Evaluacion; 7. Comparacion; 8. Limitaciones; 9. Conclusiones | Verificar metricas, matriz de confusion, errores por clase y ejemplos; comparar CNN con MLP y redactar limitaciones, mejoras y conclusiones. |
+| Trabajo compartido | 10. Reproducibilidad y aportes | Ejecutar o revisar el flujo completo, comprobar que informe, README, notebook y PPT usen la misma corrida, y preparar respuestas para preguntas cruzadas. |
+
+Antes de entregar, cada responsable debe confirmar lo siguiente:
+
+- **Gonzalo:** las cantidades `21.964 / 5.491 / 7.172`, las 24 clases y la
+  transformacion `(784) -> (28, 28, 1)` coinciden en todo el proyecto.
+- **Jenaro:** la arquitectura suma 243.352 parametros y las figuras de
+  entrenamiento e interpretabilidad pertenecen a la corrida seleccionada.
+- **Jason:** la evaluacion final usa 7.172 imagenes, 7.031 aciertos, 141
+  errores, 98,03% de accuracy y 0,9786 de F1 macro.
+- **Los tres:** la entrega final usa la corrida ubicada en `output/jason_ep2/`
+  y la presentacion `Sign_Language_MNIST_CNN_EP2_FINAL_10_MIN.pptx`.
+
 ## 2. Continuidad y variante seleccionada
 
 Se reutiliza el dataset **Sign Language MNIST** y se conserva la variante de
