@@ -122,7 +122,7 @@ La asignacion detallada y las tareas compartidas estan en
 
 - [Notebook ejecutable CNN](notebooks/03_sign_language_mnist_cnn_ep2.ipynb).
 - [Informe tecnico EP2](INFORME_TECNICO_EP2.md).
-- [Presentación EP2 integrada](presentation/archivos/Sign_Language_MNIST_CNN_EP2_Jason.pptx).
+- [Presentación final EP2 de 10 minutos](presentation/archivos/Sign_Language_MNIST_CNN_EP2_FINAL_10_MIN.pptx).
 - [Guion de presentacion y defensa](presentation/guion_ep2.md).
 - [Guia individual de Jenaro para la EP2](presentation/jenaro_defensa_ep2.md).
 - [Métricas de la ejecución elegida](output/jason_ep2/reports/cnn_metrics.json).
